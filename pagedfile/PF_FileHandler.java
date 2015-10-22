@@ -1,16 +1,65 @@
 package pagedfile;
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+
+import buffermanager.BufferBlock;
 import constant.Constant;
+
 import java.io.RandomAccessFile;
+
+import buffermanager.Buffer;
 public class PF_FileHandler {
-	PF_FileHandler(String filename_,int fileID_, int counter_){
+	PF_FileHandler(Buffer buffer_, String filename_,int fileID_, int counter_, int pageSize_, int freeFirst_){
 		filename = filename_;
 		fileId = fileID_;
 		counter = counter_;
-		file = new File(Constant.FILE_PATH+File.separator+filename);
+		pageSize = pageSize_;
+		freeFirst = freeFirst_;
+		buffer = buffer_;
+//		file = new File(Constant.FILE_PATH+File.separator+filename);
+	}
+	public void writeBackHead() throws Exception{
+		int off = 0;
+		RandomAccessFile randomAccessFile = new RandomAccessFile (Constant.FILE_PATH+File.separator+filename, "rw");
+//		System.out.println(off);
+		randomAccessFile.seek(off);
+		randomAccessFile.write(PF_Manager.intTobyteArray(pageSize));
+		randomAccessFile.write(PF_Manager.intTobyteArray(freeFirst));
+		randomAccessFile.close();
+	}
+	public void markDirty(int pageNum) {
+		buffer.markDirty(fileId, pageNum);
+	}
+	public void forcePages(int pageNum) throws Exception{
+		buffer.writeBack(fileId, pageNum);
+	}
+	public  int addPage(byte[] data) throws Exception {
+		if (freeFirst != Constant.FILE_FREE_END) {
+			BufferBlock block = buffer.getBlock(fileId, freeFirst);
+			block.setData(data);
+			int pageNum_ = freeFirst;
+			freeFirst = block.getHead();
+			block.setHead(Constant.PAGE_UESD);
+			return pageNum_;
+		} 
+		else {
+			BufferBlock block = new BufferBlock(fileId,pageSize,new PF_PageHandler(this,fileId,pageSize),Constant.PAGE_UESD,data,true);
+			buffer.loadBlock(block);
+			block.writeBack();
+			return ++pageSize-1;
+		}
+		
+	}
+	public void deletePage(int pageNum) throws Exception{
+		buffer.deleteBlock(fileId,pageNum);
+		getPage(pageNum).writePageHead(freeFirst);
+		freeFirst = pageNum;
+		
 	}
 	public PF_PageHandler getPage(int pageNum) {
-		return new PF_PageHandler(this,pageNum,fileId);
+		return new PF_PageHandler(this,fileId,pageNum);
 	}
 	public String getFilename() {
 		return filename;
@@ -41,9 +90,12 @@ public class PF_FileHandler {
 	}
 	
 	String filename;
+	int pageSize;
+	int freeFirst;
 	int fileId;
 	int counter; // for a file open multiple times
 	int pageNum;
-	File file;
+	Buffer buffer;
+//	File file;
 
 }

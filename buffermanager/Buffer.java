@@ -1,7 +1,9 @@
 package buffermanager;
 import pagedfile.*;
+
 import java.util.LinkedList;
 import java.util.Hashtable;
+
 import constant.Constant;
 public class Buffer {
 	class LRUNode {
@@ -43,6 +45,7 @@ public class Buffer {
 		Integer key = getHashKey(block.getFileId(),block.getPageNum());
 		LRUNode node = new LRUNode(key);
 		Hashitem item = new Hashitem(node,block);
+//		System.out.println(node);
 		LRUList.addFirst(node);
 		hashTable.put(key, item);
 	}
@@ -62,7 +65,48 @@ public class Buffer {
 		}
 		return null;
 	}
-	
+//	public BufferBlock addBlock(int head,byte[] data, PF_FileHandler fileHandler, int fileId, int pageNum) {
+//		
+//	}
+	public void writeBack(int fileId, int pageNum) throws Exception {
+		BufferBlock block = getBlock(fileId, pageNum);
+		if (block.isDirty()) {
+			block.writeBack();
+		}
+	}
+	public void flush(int fileId) throws Exception {		
+		for (Integer key : hashTable.keySet()) {
+			Hashitem item = hashTable.get(key);
+			if (item.block.getFileId() == fileId) {
+				
+				BufferBlock block = item.block;
+				if (block.isDirty()) {
+					block.writeBack();
+				}
+				LRUNode node = item.node;
+				LRUList.remove(node);
+				hashTable.remove(item);
+			}
+		}
+	}
+	public void deleteBlock(int fileId,int pageNum) throws Exception {
+		Integer key = getHashKey(fileId, pageNum);
+		if (hashTable.containsKey(key)) {
+			Hashitem item = hashTable.get(key);
+			LRUNode node = item.node;
+			LRUList.remove(node);
+			hashTable.remove(key);
+			BufferBlock block = item.block;
+		}
+	}
+	public void markDirty(int fileId, int pageNum) {
+		BufferBlock block = getBlock(fileId, pageNum);
+		block.Dirty();
+	}
+	public Buffer() {
+		LRUList = new LinkedList<LRUNode>();
+		hashTable = new Hashtable<Integer, Hashitem>();
+	}
 	LinkedList<LRUNode> LRUList;
 	Hashtable<Integer, Hashitem> hashTable;
 }
