@@ -45,7 +45,7 @@ public class BufferBlock {
 	}
 	public void setData(byte[] data) {
 		this.data = data;
-		System.out.println("set Data");
+		System.out.println("Buffer Block set Data");
 		Dirty();
 	}
 	public int getHead() {

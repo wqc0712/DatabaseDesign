@@ -65,6 +65,26 @@ public class Buffer {
 		}
 		return null;
 	}
+	public BufferBlock loadPage(PF_FileHandler fileHandler, int pageNum) throws Exception{
+		PF_PageHandler page = fileHandler.getPage(pageNum);
+		byte[] data = page.getPage();
+		int head = page.getPageHead();
+		if (isFull()) {
+			deleteLRU();
+		}
+		BufferBlock block = new BufferBlock(fileHandler.getFileId(),pageNum,page,head,data);
+		loadBlock(block);
+		return block;
+	}
+	public BufferBlock getBlock(PF_FileHandler fileHandler , int pageNum) throws Exception{
+		int fileId = fileHandler.getFileId();
+		BufferBlock block = getBlock(fileId, pageNum);
+		if (block != null) {
+			System.out.println("block get in buffer");
+			return block;
+		}
+		return loadPage(fileHandler, pageNum);
+	}
 //	public BufferBlock addBlock(int head,byte[] data, PF_FileHandler fileHandler, int fileId, int pageNum) {
 //		
 //	}

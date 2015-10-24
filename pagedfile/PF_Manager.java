@@ -117,25 +117,10 @@ public class PF_Manager {
 		}
 		
 	}
-	public BufferBlock loadPage(PF_FileHandler fileHandler, int pageNum) throws Exception{
-		PF_PageHandler page = fileHandler.getPage(pageNum);
-		byte[] data = page.getPage();
-		int head = page.getPageHead();
-		if (buffer.isFull()) {
-			buffer.deleteLRU();
-		}
-		BufferBlock block = new BufferBlock(fileHandler.getFileId(),pageNum,page,head,data);
-		buffer.loadBlock(block);
-		return block;
-	}
+
 	public BufferBlock getBlock(PF_FileHandler fileHandler , int pageNum) throws Exception{
-		int fileId = fileHandler.getFileId();
-		BufferBlock block = buffer.getBlock(fileId, pageNum);
-		if (block != null) {
-			System.out.println("block get in buffer");
-			return block;
-		}
-		return loadPage(fileHandler, pageNum);
+		BufferBlock block = buffer.getBlock(fileHandler, pageNum);
+		return block;
 	}
 	public byte[] getBlockData(PF_FileHandler fileHandler , int pageNum) throws Exception{
 		BufferBlock block = getBlock(fileHandler, pageNum);

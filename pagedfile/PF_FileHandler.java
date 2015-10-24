@@ -36,6 +36,7 @@ public class PF_FileHandler {
 		buffer.writeBack(fileId, pageNum);
 	}
 	public  int addPage(byte[] data) throws Exception {
+		assert(data.length == Constant.PAGE_SIZE);
 		if (freeFirst != Constant.FILE_FREE_END) {
 			BufferBlock block = buffer.getBlock(fileId, freeFirst);
 			block.setData(data);
@@ -52,6 +53,9 @@ public class PF_FileHandler {
 		}
 		
 	}
+	public int addPage() throws Exception {
+		return addPage(new byte[Constant.PAGE_SIZE]);
+	}
 	public void deletePage(int pageNum) throws Exception{
 		buffer.deleteBlock(fileId,pageNum);
 		getPage(pageNum).writePageHead(freeFirst);
@@ -60,6 +64,14 @@ public class PF_FileHandler {
 	}
 	public PF_PageHandler getPage(int pageNum) {
 		return new PF_PageHandler(this,fileId,pageNum);
+	}
+	public byte[] getBlockData(int pageNum) throws Exception{
+		BufferBlock block = buffer.getBlock(this, pageNum);
+		return block.getData();
+	}
+	public BufferBlock getBlock(int pageNum) throws Exception{
+		BufferBlock block = buffer.getBlock(this, pageNum);
+		return block;
 	}
 	public String getFilename() {
 		return filename;

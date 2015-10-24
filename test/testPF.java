@@ -14,11 +14,11 @@ public class testPF {
 		// TODO Auto-generated method stub
 		PF_Manager pfManager = new PF_Manager();
 		try {
-			PF_Manager.destoryFile("1.tb");
-			PF_Manager.destoryFile("2.tb");
-			PF_Manager.destoryFile("3.tb");
-			PF_Manager.destoryFile("4.tb");
-			PF_Manager.destoryFile("5.tb");
+//			PF_Manager.destoryFile("1.tb");
+//			PF_Manager.destoryFile("2.tb");
+//			PF_Manager.destoryFile("3.tb");
+//			PF_Manager.destoryFile("4.tb");
+//			PF_Manager.destoryFile("5.tb");
 			PF_Manager.creatFile("1.tb");
 			PF_Manager.creatFile("2.tb");
 			PF_Manager.creatFile("3.tb");

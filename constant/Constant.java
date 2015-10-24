@@ -13,4 +13,12 @@ public class Constant {
 	public final static int PAGE_END = -1;
 	public final static int PAGE_UESD = -2;
 	
+	
+// RM 
+	public final static int INVALID_PAGE = -1;
+	public final static int INVALID_SLOT = -1;
+//RM_Record
+	public final static int INVALID_SIZE = -1;
+//RM_FileHandler
+	public final static int NO_FREE_PAGE = -1;
 }
