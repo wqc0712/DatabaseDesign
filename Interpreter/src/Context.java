@@ -22,10 +22,26 @@ public class Context {
     private String ListID;
     private Boolean Index;
     private String PK;
+    private Boolean Error;
     private ArrayList<CondExpr> CondTable = new ArrayList<CondExpr>();
     private int CondVisit= 0;
     private ArrayList<Value> ValueTable = new ArrayList();
     private int ValueVisit = 0;
+
+    public void clean(){
+        Method = "";
+        TableID = "";
+        IndexID = "";
+        ListID = "";
+        Index = false;
+        PK = "";
+        Error = false;
+        CondTable = new ArrayList<>();
+        CondVisit = 0;
+        ValueTable = new ArrayList<>();
+        ValueVisit = 0;
+    }
+
     public void setMethod(String key){
         if (key.equals("")) {
             Method = new String("Error");
@@ -35,6 +51,14 @@ public class Context {
     }
     public String getMethod(){
         return Method;
+    }
+
+    public void setError(Boolean B) {
+        Error = B;
+    }
+
+    public Boolean getError() {
+        return Error;
     }
 
     public void setTableID(String key){
