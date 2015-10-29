@@ -12,7 +12,7 @@ public class testPF {
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		PF_Manager pfManager = new PF_Manager();
+		PF_Manager pfManager = PF_Manager.getInstance();
 		try {
 //			PF_Manager.destoryFile("1.tb");
 //			PF_Manager.destoryFile("2.tb");
