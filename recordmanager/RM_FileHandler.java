@@ -35,8 +35,9 @@ public class RM_FileHandler {
 			return null;
 		}
 	}
-	public void insertRec(RID rid, byte[] data) throws Exception {
+	public RID insertRec(byte[] data) throws Exception {
 		// TODO Notice new byte is zero ?
+		System.out.println("FreePage"+header.firstFreePage);
 		assert(data.length == header.recordSize);
 		if (header.firstFreePage == Constant.NO_FREE_PAGE) {
 			int pageNum = pfh.addPage();
@@ -49,6 +50,8 @@ public class RM_FileHandler {
 			insertHeadData(pageData, pageHandler.toByteArray());
 			header.firstFreePage = pageNum; 
 		} 
+		int pageNum = header.firstFreePage;
+		System.out.println(pageNum);
 		byte[] pageData = pfh.getBlockData(header.firstFreePage);
 		RM_PageHandler pageHandler =  RM_PageHandler.parsePageData(pageData,header.bitmapSize);
 		int slotNum = pageHandler.getFirstFreeBit();
@@ -60,9 +63,7 @@ public class RM_FileHandler {
 		if (pageHandler.recordNum == header.numRecPerPage) {
 			header.firstFreePage = pageHandler.nextFreePage;
 		}
-		
-		
-		
+		return new RID(pageNum,slotNum);
 	}
 	public void deleteRec(RID rid) throws Exception{
 		int pageNum = rid.getPageNum();
@@ -84,6 +85,20 @@ public class RM_FileHandler {
 		RM_PageHandler pageHandler =  RM_PageHandler.parsePageData(pageData,header.bitmapSize);
 		assert(pageHandler.checkRecExist(slotNum));
 		insertData(pageData, slotNum, data);
+	}
+	public RID getNextRec(RID rid) throws Exception{
+		int pageNum = rid.getPageNum();
+		int slotNum = rid.getSlotNum();
+		int nextSlotNum;
+		byte[] pageData = pfh.getBlockData(pageNum);
+		RM_PageHandler pageHandler =  RM_PageHandler.parsePageData(pageData,header.bitmapSize);
+		if ((nextSlotNum = pageHandler.getNextBit(slotNum)) == Constant.NO_NEXT_REC) {
+			BufferBlock nextBlock;
+			if ((nextBlock = pfh.getNextPage(pageNum)) == null) 
+				return null;
+			return this.getNextRec(new RID(nextBlock.getPageNum(),-1));
+		} 
+		return new RID(pageNum,nextSlotNum);
 	}
 	public void insertData(byte[] page, int slotNum, byte[] recData) {
 		int off = header.bitmapOffset+ header.bitmapSize + slotNum * header.recordSize;

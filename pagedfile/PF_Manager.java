@@ -43,6 +43,34 @@ public class PF_Manager {
 	    int v3 = (a[3] & 0xff) ;  
 	    return v0 + v1 + v2 + v3;  
 	}
+	public static double byteArrayToDouble(byte[] b) {  
+	    long l;  
+	    l = b[0];  
+	    l &= 0xff;  
+	    l |= ((long) b[1] << 8);  
+	    l &= 0xffff;  
+	    l |= ((long) b[2] << 16);  
+	    l &= 0xffffff;  
+	    l |= ((long) b[3] << 24);  
+	    l &= 0xffffffffl;  
+	    l |= ((long) b[4] << 32);  
+	    l &= 0xffffffffffl;  
+	    l |= ((long) b[5] << 40);  
+	    l &= 0xffffffffffffl;  
+	    l |= ((long) b[6] << 48);  
+	    l &= 0xffffffffffffffl;  
+	    l |= ((long) b[7] << 56);  
+	    return Double.longBitsToDouble(l);  
+	}
+	public static byte[] doubleToByteArray(double x) {  
+	    byte[] b = new byte[8];  
+	    long l = Double.doubleToLongBits(x);  
+	    for (int i = 0; i < 8; i++) {  
+	        b[i] = new Long(l).byteValue();  
+	        l = l >> 8;  
+	    }  
+	    return b;
+	}  
 	public static void creatFile(String filename) throws Exception {
 		print(fileLocation(filename));
 		File file = new File(fileLocation(filename));
@@ -144,8 +172,9 @@ public class PF_Manager {
 		buffer = new Buffer();
 	}
 	static public PF_Manager getInstance() {
-		return new PF_Manager();
+		return manager;
 	}
 	Buffer buffer;
+	static PF_Manager manager =  new PF_Manager();
 	ArrayList<PF_FileHandler> fileHandlerList;
  }
