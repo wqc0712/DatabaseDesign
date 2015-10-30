@@ -35,6 +35,19 @@ public class PF_FileHandler {
 	public void forcePages(int pageNum) throws Exception{
 		buffer.writeBack(fileId, pageNum);
 	}
+	public  BufferBlock getFirstPage() {
+		return getNextPage(-1);
+	}
+	public  BufferBlock getNextPage(int pageNum) {
+		for (int cur = pageNum+1; cur < pageSize; cur++) {
+			BufferBlock block = buffer.getBlock(fileId,cur);
+			if (block.getHead() == Constant.PAGE_UESD) {
+				return block;
+			}
+		}
+		return null;
+	}
+	
 	public  int addPage(byte[] data) throws Exception {
 		assert(data.length == Constant.PAGE_SIZE);
 		if (freeFirst != Constant.FILE_FREE_END) {

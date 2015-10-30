@@ -139,11 +139,13 @@ public class PF_Manager {
 		buffer.flush(fileHandler.getFileId());
 	}
 	
-	public PF_Manager() {
+	private PF_Manager() {
 		fileHandlerList = new ArrayList<PF_FileHandler>();
 		buffer = new Buffer();
 	}
-	
+	static public PF_Manager getInstance() {
+		return new PF_Manager();
+	}
 	Buffer buffer;
 	ArrayList<PF_FileHandler> fileHandlerList;
  }
