@@ -21,4 +21,14 @@ public class Constant {
 	public final static int INVALID_SIZE = -1;
 //RM_FileHandler
 	public final static int NO_FREE_PAGE = -1;
+	
+//RM_PageHandler
+	public final static int NO_NEXT_REC = -1;
+//RM_FileScan
+	public static enum TYPE{
+		STRING,INT,DOUBLE
+	}
+	public static enum COMP_OP{
+		EQ_OP,LT_OP,GT_OP,LE_OP,GE_OP,NE_OP,NO_OP
+	}
 }

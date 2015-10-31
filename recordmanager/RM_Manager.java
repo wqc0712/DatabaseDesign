@@ -4,7 +4,7 @@ import pagedfile.PF_FileHandler;
 import buffermanager.BufferBlock;
 import constant.Constant;
 public class RM_Manager {
-	void createFile(String filename, int recordSize) throws Exception {
+	public void createFile(String filename, int recordSize) throws Exception {
 		// TODO constant is magic 
 		// NOTICE recordSize is smaller than PAGE_SIZE
 		int numRecPerPage = RM_FileHeader.calNumRecPerPage(recordSize);
@@ -39,7 +39,16 @@ public class RM_Manager {
 		PF_FileHandler pf_fileHandler = fileHandler.pfh;
 		BufferBlock headblock = pf_fileHandler.getBlock(0);
 		headblock.setData(fileHandler.header.toByteArray());
+//		System.out.println("bitmapoffset"+fileHandler.header.bitmapOffset);
 		pfm.closeFile(pf_fileHandler);
 	}
+	private RM_Manager() {
+		// TODO Auto-generated constructor stub
+		pfm = PF_Manager.getInstance();
+	}
+	public static RM_Manager getInstance() {
+		return manager;
+	}
+	static RM_Manager manager = new RM_Manager();
  	PF_Manager pfm;
 }
