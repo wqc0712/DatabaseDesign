@@ -1,3 +1,4 @@
+import java.io.FileInputStream;
 import java.util.Scanner;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -10,12 +11,39 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        FileInputStream inputStream = null;
         while (true) {
+            if (inputStream != null) {
+                if (!scanner.hasNextLine()) {
+                    try {
+                        inputStream.close();
+                        scanner = new Scanner(System.in);
+                        inputStream = null;
+                    } catch (Exception err) {
+                        System.err.println("Can't Close file!");
+                    }
+                }
+            }
             String line = scanner.nextLine();
+
             while (line.contains(";") == false) {
                 line = line + scanner.nextLine();
             }
             if (line.equals("quit;")) return;
+
+            if (line.substring(0,4).equals("exec")) {
+                line = line.substring(4);
+                line = line.trim();
+                line = line.replace(" ","");
+                line = line.replace(";","");
+                try {
+                    inputStream = new FileInputStream(line);
+                    scanner = new Scanner(inputStream);
+                    continue;
+                } catch (Exception err) {
+                    System.err.println("Can't open file!");
+                }
+            }
             if (line != null) {
 
                 line = line.trim();

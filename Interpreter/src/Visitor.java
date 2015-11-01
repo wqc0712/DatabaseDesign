@@ -41,12 +41,12 @@ public class Visitor extends createBaseVisitor<Double> {
                 break;
             }
             case createParser.FLOAT :{
-                D = 1;
+                D = 2;
                 E = 0;
                 break;
             }
             case createParser.STRING :{
-                D = 2;
+                D = 1;
                 C = C.replace("\'","");
                 E = 0;
                 break;
@@ -83,12 +83,12 @@ public class Visitor extends createBaseVisitor<Double> {
                 break;
             }
             case createParser.FLOAT :{
-                D = 1;
+                D = 2;
                 E = 0;
                 break;
             }
             case createParser.STRING :{
-                D = 2;
+                D = 1;
                 C = C.replace("\'","");
                 E = 0;
                 break;
@@ -112,12 +112,12 @@ public class Visitor extends createBaseVisitor<Double> {
                 break;
             }
             case createParser.FLOAT :{
-                D = 1;
+                D = 2;
                 E = 0;
                 break;
             }
             case createParser.STRING :{
-                D = 2;
+                D = 1;
                 C = C.replace("\'","");
                 E = 0;
                 break;

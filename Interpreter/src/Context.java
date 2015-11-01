@@ -29,12 +29,12 @@ public class Context {
     private int ValueVisit = 0;
 
     public void clean(){
-        Method = "";
-        TableID = "";
-        IndexID = "";
-        ListID = "";
+        Method = null;
+        TableID = null;
+        IndexID = null;
+        ListID = null;
         Index = false;
-        PK = "";
+        PK = null;
         Error = false;
         CondTable = new ArrayList<>();
         CondVisit = 0;
@@ -139,6 +139,30 @@ public class Context {
 
     public boolean isValueEmpty() { return ValueTable.isEmpty();}
 
+    public void push() {
+        if (getError() == true) return;
+        switch (Method) {
+            case "select" :{
 
+                break;
+            }
+            case "delete" :{
+                break;
+            }
+            case "drop" :{
+                break;
+            }
+            case "create" :{
+                break;
+            }
+            case "insert" :{
+                break;
+            }
+            default:{
+                setError(true);
+                return;
+            }
+        }
+    }
 
 }
