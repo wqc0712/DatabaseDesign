@@ -1,4 +1,5 @@
 package recordmanager;
+import constant.Constant;
 import pagedfile.PF_Manager;
 public class RM_PageHandler {
 	static RM_PageHandler parsePageData(byte[] pageData,int bitmapSize) {
@@ -8,9 +9,19 @@ public class RM_PageHandler {
 		System.arraycopy(pageData, 4, recordSizeByte, 0, 4);
 		pageHandler.nextFreePage = PF_Manager.byteArrayToint(pageData);
 		pageHandler.recordNum = PF_Manager.byteArrayToint(recordSizeByte);
+		pageHandler.bitmap = new byte[bitmapSize];
 		System.arraycopy(pageData, 8, pageHandler.bitmap, 0, bitmapSize);
 		pageHandler.bitmapSize = bitmapSize;
 		return pageHandler;
+	}
+	static int getNextBit(byte[] bitmap, int slotNum) {
+		while (slotNum < bitmap.length*8 - 1) {
+			slotNum++;
+			if (getBit(bitmap,slotNum) == 1) {
+				return slotNum;
+			}
+		}
+		return Constant.NO_NEXT_REC;
 	}
 	static int getBit(byte[] bitmap, int slotNum) {
 		int bytePos = slotNum / 8;
@@ -28,6 +39,11 @@ public class RM_PageHandler {
 		int byteOff = slotNum % 8;
 		bitmap[bytePos] = (byte)(bitmap[bytePos] & (~(1 << byteOff)));
 	}
+	
+	
+	public int getNextBit(int slotNum) {
+		return getNextBit(bitmap,slotNum);
+	}
 	public void setBit(int slotNum) {
 		setBit(bitmap, slotNum);
 	}
@@ -42,16 +58,19 @@ public class RM_PageHandler {
 			return false;
 	}
 	public int getFirstFreeBit() {
+//		System.out.println("bitmap"+bitmap[0]);
 		for (int i = 0; i < bitmapSize; i++) {
 			if (bitmap[i] != 0xff) {
 				int off = 0;
 				int freeByte = bitmap[i];
+				if (freeByte == 0) 
+					return i*8;
 				while (freeByte != 0) {
+					freeByte = freeByte >>> 1;
+					off += 1;
 					if ((freeByte & 1) == 0){
 						return off+i*8;
 					}
-					freeByte = freeByte >>> 1;
-					off += 1;
 				}
 			}
 		}
@@ -69,6 +88,13 @@ public class RM_PageHandler {
 			byteHead[i+8] = bitmap[i];
 		return byteHead;
  	}
+	public RM_PageHandler() {
+		// TODO Auto-generated constructor stub
+		nextFreePage = -1;
+		recordNum = -1;
+		bitmap = null;
+		bitmapSize = -1;
+	}
 	int nextFreePage;
 	int recordNum;
 	byte[] bitmap;
