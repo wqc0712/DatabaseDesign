@@ -320,11 +320,7 @@ public class CatalogManager {
     }
 
     public void addTable(String TableName,int num, ArrayList<Value> attr,String PK) throws Exception {
-        for (int i = 0;i < TableNum;i++) {
-            if (T.get(i).getName() == TableName) {
-                throw new TableAreadyExist();
-            }
-        }
+        // Must Run isTableExist First
         TableNum = TableNum+1;
         T.add(new Table(MaxTable,TableName,num,attr));
         addIndex("_"+TableName,TableName,PK);
@@ -353,9 +349,31 @@ public class CatalogManager {
         return false;
     }
 
+    public boolean TestAttrOnOrder(String TableName, int num, int type, int length) {
+        for (int i = 0;i < TableNum;i++) {
+            if (T.get(i).getName() == TableName) {
+                Table Temp = T.get(i);
+                Value VTemp = Temp.getAttr(num);
+                if (VTemp == null) return false;
+                if (VTemp.getType() == type && VTemp.getLength() >= length) return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isIndexExist(String IndexName) {
         for (int i = 0;i < IndexNum;i++) {
             if (I.get(i).getIndexName() == IndexName) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isIndexOnkey(String TableName, String KeyName) {
+        int ID = GetTableInformation(TableName).getType();
+        for (int i = 0;i < IndexNum;i++) {
+            if (I.get(i).getTableID() == ID && I.get(i).getKeyName() == KeyName) {
                 return true;
             }
         }
@@ -375,13 +393,13 @@ public class CatalogManager {
 
 
 
-    public Value findAttr(String TableName,String AttrName) {
+    public boolean findAttr(String TableName,String AttrName) {
         for (int i = 0;i < TableNum;i++) {
             if (T.get(i).getName() == TableName) {
-                return T.get(i).getAttr(AttrName);
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     public Value GetTableInformation(String TableName) {
@@ -389,6 +407,10 @@ public class CatalogManager {
         for (int i = 0;i < TableNum;i++) {
             if (T.get(i).getName() == TableName) {
                 Vtemp = new Value(T.get(i).getName(),T.get(i).getID(),T.get(i).getLength(),false);
+                // Data -> TableName
+                // Type -> TableID
+                // Length -> AttrNumber
+                // UNI -> false
             }
         }
         return Vtemp;
