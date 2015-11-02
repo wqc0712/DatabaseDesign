@@ -7,7 +7,7 @@ import recordmanager.RM_FileHandler;
 import recordmanager.RM_Manager;
 import sun.awt.SunHints.Value;
 import CatalogManager.src.*;
-import Interpreter.Main;
+import Interpreter.*;
 
 public class API {
 	static API manager = new API();
@@ -51,10 +51,16 @@ public class API {
 
 	public void insert_table(String table_Name, ArrayList<Value> attr) throws Exception{
 		if (cm.isTableExist(table_Name)) {
-			if (cm.TestAttrOnOrder(table_Name, attr)) {											/* The condition here is wrong */
+			boolean judge = true;
+			for (int i = 0; i < attr.size(); i++)
+			if (!cm.TestAttrOnOrder(table_Name, i, attr.get(i).getType(), attr.get(i).getLength())) {
+				judge = false;
+				break;
+			}
+			if (judge) {											/* The condition here is wrong */
 				try {
-					static RM_FileHandler rmf = rm.openFile(table_Name);
-					rmf.insertRec(attr.toByte());												/* Here I need a toByte() funciotn to translate ArrayList into byte array. */
+					RM_FileHandler rmf = rm.openFile(table_Name);
+					rmf.insertRec(String2Byte(attr));												/* Here I need a toByte() funciotn to translate ArrayList into byte array. */
 				} catch (Exception e) {
 					throw e;
 				} finally {
@@ -69,30 +75,29 @@ public class API {
 	
 	public void delete_record(String table_Name, ArrayList<CondExpr> attr) throws Exception{
 		if (cm.isTableExist(table_Name)) {
-			if (cm.TestAttrOnOrder(table_Name, attr)) {
 				try {
 					static RM_FileHandler rmf = rm.openFile(table_Name);
 					boolean judge = true;
 					for (int i = 0; i < attr.size(); i++)
-					if TestAttr(table_Name, attr.get(i),getID(),){								/* Here I need ask Qichen about the function he provided. */
+					if (!cm.TestAttr(table_Name, attr.get(i).getID(),attr.get(i).getValue().getType(),attr.get(i).getValue().getLength())) {
 						judge = false;
 						break;
 					}
 					if (judge) {
 																								/* I need a function about knowwing weather it comes to the end of table*/
-					}
+					} else
+						throw new Exception("Error: attributes are not corresponding to the table.");
 				} catch (Exception e) {
 					throw e;
 				} finally {
 					/*useless*/
-				}
-			} else 
-				throw new Exception("Error: attributes are not correspongding to the table.");
+				} else 
+					throw new Exception("Error: attributes are not correspongding to the table.");
 		} else
 			throw new Exception("Error: do not have this table. "); 
 	}
 	
-	private static byte[] string2byte(ArrayList<String> attr) {
+	private static byte[] String2Byte(ArrayList<Value> attr) {
 		byte[] a;
 		a = new byte[attr.size() * 256];
 		for (int i = 0; i < attr.size(); i++){
