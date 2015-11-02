@@ -57,10 +57,10 @@ public class API {
 				judge = false;
 				break;
 			}
-			if (judge) {											/* The condition here is wrong */
+			if (judge) {
 				try {
 					RM_FileHandler rmf = rm.openFile(table_Name);
-					rmf.insertRec(String2Byte(attr));												/* Here I need a toByte() funciotn to translate ArrayList into byte array. */
+					rmf.insertRec(String2Byte(attr));
 				} catch (Exception e) {
 					throw e;
 				} finally {
@@ -68,7 +68,6 @@ public class API {
 				}
 			} else
 				throw new Exception("Error: attributes are not correspongding to the table.");
-			
 		} else 
 			throw new Exception("Error: do not have this table.");
 	}
@@ -76,7 +75,7 @@ public class API {
 	public void delete_record(String table_Name, ArrayList<CondExpr> attr) throws Exception{
 		if (cm.isTableExist(table_Name)) {
 				try {
-					static RM_FileHandler rmf = rm.openFile(table_Name);
+					RM_FileHandler rmf = rm.openFile(table_Name);
 					boolean judge = true;
 					for (int i = 0; i < attr.size(); i++)
 					if (!cm.TestAttr(table_Name, attr.get(i).getID(),attr.get(i).getValue().getType(),attr.get(i).getValue().getLength())) {
@@ -91,8 +90,7 @@ public class API {
 					throw e;
 				} finally {
 					/*useless*/
-				} else 
-					throw new Exception("Error: attributes are not correspongding to the table.");
+				}
 		} else
 			throw new Exception("Error: do not have this table. "); 
 	}
@@ -101,9 +99,9 @@ public class API {
 		byte[] a;
 		a = new byte[attr.size() * 256];
 		for (int i = 0; i < attr.size(); i++){
-			String u = attr.get(i);
-			for (int j = 0; j < attr.size(); j++)
-				a[i * 256 + j] = (byte)(u[j],toByte());
+			String u = attr.get(i).getData();
+			for (int j = 0; j < u.length(); j++)
+				a[i * 256 + j] = u[j];
 		}
 		return a;
 	}
