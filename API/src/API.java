@@ -99,9 +99,9 @@ public class API {
 		byte[] a;
 		a = new byte[attr.size() * 256];
 		for (int i = 0; i < attr.size(); i++){
-			String u = attr.get(i).getData();
-			for (int j = 0; j < u.length(); j++)
-				a[i * 256 + j] = u[j];
+			char[] u = attr.get(i).getData().toCharArray();
+			for (int j = 0; j < u.length; j++)
+				a[i * 256 + j] = (byte) (u[j] & 0xFF);
 		}
 		return a;
 	}
