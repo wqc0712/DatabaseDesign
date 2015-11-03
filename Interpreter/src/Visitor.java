@@ -48,7 +48,7 @@ public class Visitor extends createBaseVisitor<Double> {
             case createParser.STRING :{
                 D = 1;
                 C = C.replace("\'","");
-                E = 0;
+                E = C.length();
                 break;
             }
         }
@@ -90,7 +90,7 @@ public class Visitor extends createBaseVisitor<Double> {
             case createParser.STRING :{
                 D = 1;
                 C = C.replace("\'","");
-                E = 0;
+                E = C.length();
                 break;
             }
         }
@@ -119,7 +119,7 @@ public class Visitor extends createBaseVisitor<Double> {
             case createParser.STRING :{
                 D = 1;
                 C = C.replace("\'","");
-                E = 0;
+                E = C.length();
                 break;
             }
         }

@@ -1,18 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import constant.Constant;
-
-//import com.sun.org.apache.xml.internal.resolver.CatalogManager;
-
-import recordmanager.RM_FileHandler;
-import recordmanager.RM_FileScan;
-import recordmanager.RM_Manager;
-import recordmanager.RM_Record;
-import sun.awt.SunHints.Value;
-import CatalogManager.src.*;
-import Interpreter.*;
-
 public class API {
 	static API manager = new API();
 	private static RM_Manager rm = RM_Manager.getInstance();
@@ -55,18 +43,18 @@ public class API {
 			try {
 				RM_FileHandler rmf = rm.openFile(table_Name);
 				if (attr.size() == 1) {
-					if (cm.TestAttr(table_Name, 0, attr.get(0).getID(), attr.get(0).getValue().getType(), attr.get(0).getLength())){ /*The last parameter may have some problem.*/
-						Constant.TYPE type;
-						int length;
+					if (cm.TestAttr(table_Name, attr.get(0).getID(), attr.get(0).getValue().getType(), attr.get(0).getValue().getLength())){ /*The last parameter may have some problem.*/
+						Constant.TYPE type = null;
+						int length = 0;
 						switch (attr.get(0).getValue().getType()) {
 						case 0: type = Constant.TYPE.INT; length = 4;break;
-						case 1: type = Constant.TYPE.STRING; length = attr.get(0).getLength();break;	/*This may have some problem about attrbute's length. */
+						case 1: type = Constant.TYPE.STRING; length = attr.get(0).getValue().getLength();break;	/*This may have some problem about attrbute's length. */
 						case 2: type = Constant.TYPE.DOUBLE; length = 8;break;
 						}
 						
 						int offset = cm.findOffset(table_Name, attr.get(0).getID());
 						
-						Constant.COMP_OP op;
+						Constant.COMP_OP op = null;
 						switch (attr.get(0).getOP()) {
 						case "=": op = Constant.COMP_OP.EQ_OP; break;
 						case ">": op = Constant.COMP_OP.GT_OP; break;
@@ -75,7 +63,9 @@ public class API {
 						case ">=": op = Constant.COMP_OP.GT_OP; break;
 						case "<=": op = Constant.COMP_OP.LE_OP; break;
 						}
-						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(attr.get(0).getValue()));
+						ArrayList<Value> temp = new ArrayList<>();
+						temp.add(attr.get(0).getValue());
+						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 						RM_Record rmr = rmfs.getNextRec();
 						while (rmr != null) {
 							System.out.println(rmr.getData());
@@ -106,6 +96,7 @@ public class API {
 			}
 			if (judge) {
 				try {
+					System.out.println("insert record");
 					RM_FileHandler rmf = rm.openFile(table_Name);
 					rmf.insertRec(String2Byte(attr));
 				} catch (Exception e) {
@@ -130,20 +121,19 @@ public class API {
 						break;
 					}
 					if (judge) {
-						RM_FileHandler rmf = rm.openFile(table_Name);
 						if (attr.size() == 1) {
-							if (cm.TestAttr(table_Name, 0, attr.get(0).getID(), attr.get(0).getValue().getType(), attr.get(0).getLength())){ /*The last parameter may have some problem.*/
-								Constant.TYPE type;
-								int length;
+							if (cm.TestAttr(table_Name, attr.get(0).getID(), attr.get(0).getValue().getType(), attr.get(0).getValue().getLength())){ /*The last parameter may have some problem.*/
+								Constant.TYPE type = null;
+								int length = 0;
 								switch (attr.get(0).getValue().getType()) {
 								case 0: type = Constant.TYPE.INT; length = 4;break;
-								case 1: type = Constant.TYPE.STRING; length = attr.get(0).getLength();break;	/*This may have some problem about attrbute's length. */
+								case 1: type = Constant.TYPE.STRING; length = attr.get(0).getValue().getLength();break;	/*This may have some problem about attrbute's length. */
 								case 2: type = Constant.TYPE.DOUBLE; length = 8;break;
 								}
 								
 								int offset = cm.findOffset(table_Name, attr.get(0).getID());
 								
-								Constant.COMP_OP op;
+								Constant.COMP_OP op = null;
 								switch (attr.get(0).getOP()) {
 								case "=": op = Constant.COMP_OP.EQ_OP; break;
 								case ">": op = Constant.COMP_OP.GT_OP; break;
@@ -152,7 +142,9 @@ public class API {
 								case ">=": op = Constant.COMP_OP.GT_OP; break;
 								case "<=": op = Constant.COMP_OP.LE_OP; break;
 								}
-								RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(attr.get(0).getValue()));
+								ArrayList<Value> temp = new ArrayList<>();
+								temp.add(attr.get(0).getValue());
+								RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 								RM_Record rmr = rmfs.getNextRec();
 								while (rmr != null) {
 									rmf.deleteRec(rmr.getRid());

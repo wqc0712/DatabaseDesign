@@ -1,7 +1,3 @@
-package recordmanager;
-import constant.Constant;
-import pagedfile.PF_FileHandler;
-import buffermanager.BufferBlock;
 public class RM_FileHandler {
 	RM_FileHandler() {
 		count = 0;

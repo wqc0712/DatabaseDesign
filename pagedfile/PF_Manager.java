@@ -1,4 +1,3 @@
-package pagedfile;
 
 import java.io.File;
 import java.io.DataOutputStream;
@@ -9,10 +8,7 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.FileReader;
-import constant.Constant;
 import java.util.ArrayList;
-import buffermanager.Buffer;
-import buffermanager.BufferBlock;
 public class PF_Manager {
 	public static void print(String s) {
 		System.out.println(s);

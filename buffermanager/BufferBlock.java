@@ -1,6 +1,3 @@
-package buffermanager;
-import constant.Constant;
-import pagedfile.PF_PageHandler;
 public class BufferBlock {
 	public BufferBlock(int fileId_,int pageNum_,PF_PageHandler page_,int head ,byte[] data_, boolean dirty_) {
 		fileId = fileId_;

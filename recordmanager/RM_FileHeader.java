@@ -1,8 +1,4 @@
-package recordmanager;
 
-import constant.Constant;
-import pagedfile.PF_FileHandler;
-import pagedfile.PF_Manager;
 public class RM_FileHeader {
 	static int calNumRecPerPage(int recordSize) {
 		return (int)((Constant.PAGE_SIZE - 8.0) / (recordSize + 1.0 / 8));

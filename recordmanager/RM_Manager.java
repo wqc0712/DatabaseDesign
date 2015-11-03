@@ -1,8 +1,3 @@
-package recordmanager;
-import pagedfile.PF_Manager;
-import pagedfile.PF_FileHandler;
-import buffermanager.BufferBlock;
-import constant.Constant;
 public class RM_Manager {
 	public void createFile(String filename, int recordSize) throws Exception {
 		// TODO constant is magic 

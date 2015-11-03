@@ -1,6 +1,3 @@
-package constant;
-
-
 public class Constant {
 //	public final static String FILE_PATH = "file";
 	

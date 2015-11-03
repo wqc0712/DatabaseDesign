@@ -1,15 +1,11 @@
-package pagedfile;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import buffermanager.BufferBlock;
-import constant.Constant;
 
 import java.io.RandomAccessFile;
 
-import buffermanager.Buffer;
 public class PF_FileHandler {
 	PF_FileHandler(Buffer buffer_, String filename_,int fileID_, int counter_, int pageSize_, int freeFirst_){
 		filename = filename_;
@@ -35,12 +31,12 @@ public class PF_FileHandler {
 	public void forcePages(int pageNum) throws Exception{
 		buffer.writeBack(fileId, pageNum);
 	}
-	public  BufferBlock getFirstPage() {
+	public  BufferBlock getFirstPage() throws Exception {
 		return getNextPage(-1);
 	}
-	public  BufferBlock getNextPage(int pageNum) {
+	public  BufferBlock getNextPage(int pageNum) throws Exception{
 		for (int cur = pageNum+1; cur < pageSize; cur++) {
-			BufferBlock block = buffer.getBlock(fileId,cur);
+			BufferBlock block = buffer.getBlock(this,cur);
 			if (block.getHead() == Constant.PAGE_UESD) {
 				return block;
 			}

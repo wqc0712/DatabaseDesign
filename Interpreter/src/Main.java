@@ -1,5 +1,6 @@
 import java.io.FileInputStream;
 import java.util.Scanner;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
@@ -29,7 +30,10 @@ public class Main {
             while (line.contains(";") == false) {
                 line = line + scanner.nextLine();
             }
-            if (line.equals("quit;")) return;
+            if (line.equals("quit;")) {
+                CatalogManager.getInstance().WriteBack();
+                return;
+            }
 
             if (line.substring(0,4).equals("exec")) {
                 line = line.substring(4);
@@ -59,11 +63,13 @@ public class Main {
                 try {
                     parser.setErrorHandler(new ErrorStrategy());
                     visitor.visit(tree);
+                    Context.getInstance().push();
+                    visitor.print();
                     if (Context.getInstance().getError()) throw new Exception();
                 } catch (Exception e) {
                     continue;
                 }
-                visitor.print();
+
             }
         }
     }

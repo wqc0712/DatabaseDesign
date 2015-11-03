@@ -1,10 +1,7 @@
-package buffermanager;
-import pagedfile.*;
 
 import java.util.LinkedList;
 import java.util.Hashtable;
 
-import constant.Constant;
 public class Buffer {
 	class LRUNode {
 		public LRUNode(Integer key_) {

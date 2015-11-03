@@ -1,6 +1,3 @@
-package recordmanager;
-import constant.Constant;
-import pagedfile.PF_Manager;
 public class RM_PageHandler {
 	static RM_PageHandler parsePageData(byte[] pageData,int bitmapSize) {
 		//TODO constant for 4

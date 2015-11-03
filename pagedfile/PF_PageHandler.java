@@ -1,4 +1,3 @@
-package pagedfile;
 import java.io.File;
 import java.io.DataOutputStream;
 import java.io.BufferedOutputStream;
@@ -6,11 +5,8 @@ import java.io.FileOutputStream;
 import java.io.DataInputStream;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import pagedfile.PF_Manager;
 import java.io.FileReader;
 import java.io.RandomAccessFile;
-import constant.Constant;
-import pagedfile.PF_FileHandler;
 public class PF_PageHandler {
 	PF_PageHandler(PF_FileHandler file_, int fileId_,int pageNum_) {
 		file = file_;

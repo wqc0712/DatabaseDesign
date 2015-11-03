@@ -143,19 +143,57 @@ public class Context {
         if (getError() == true) return;
         switch (Method) {
             case "select" :{
-
+                try {
+                    API.getInstance().select_from(TableID,CondTable);
+                } catch (Exception err) {
+                    Error = true;
+                    err.printStackTrace();
+                }
                 break;
             }
             case "delete" :{
+                try {
+                    API.getInstance().delete_record(TableID,CondTable);
+                } catch (Exception err) {
+                    Error = true;
+                    err.printStackTrace();
+                }
                 break;
             }
             case "drop" :{
+                if (Index == false) {
+                    try {
+                        API.getInstance().drop_table(TableID);
+                    } catch (Exception err) {
+                        Error = true;
+                        err.printStackTrace();
+                    }
+                }
                 break;
             }
             case "create" :{
+                if (Index == false) {
+                    try {
+                        API.getInstance().create_table(TableID, PK, ValueTable);
+                    } catch (Exception err) {
+                        Error = true;
+                        err.printStackTrace();
+                    }
+                } else {
+                    try {
+                    } catch (Exception err) {
+
+                    }
+                }
                 break;
             }
             case "insert" :{
+                try {
+                    API.getInstance().insert_table(TableID,ValueTable);
+                } catch (Exception err) {
+                    Error = true;
+                    err.printStackTrace();
+                }
                 break;
             }
             default:{

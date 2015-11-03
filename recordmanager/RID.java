@@ -1,5 +1,3 @@
-package recordmanager;
-import constant.Constant;
 
 public class RID {
 	public RID() {

@@ -32,9 +32,14 @@ public class CatalogManager {
         } catch (Exception error) {
             System.err.println("Error in open file Catalog!");
         }
-        BufferBlock B = PF.getFirstPage();
+        BufferBlock B = null;
+        try {
+            B = PF.getFirstPage();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (B != null) {
-
+            System.out.print("Begin!");
             int BlockIndex = 1;
             byte[] Data = B.getData();
             byte[] Temp;
@@ -139,6 +144,7 @@ public class CatalogManager {
             if (IndexNum > 0) MaxIndex = I.get(IndexNum-1).getID()+1;
             if (TableNum > 0) MaxTable = T.get(TableNum-1).getID()+1;
         }
+        System.out.println(TableNum);
     }
 
     public void WriteBack (){
@@ -278,7 +284,7 @@ public class CatalogManager {
             throw new TableNoExist();
         }
         int tableID = Temp.getID();
-        if (Temp.getAttr(KeyName) == null) {
+        if (Temp.getAttrByName(KeyName) == null) {
             throw new AttrNoExist();
         }
         IndexNum = IndexNum+1;
@@ -289,7 +295,7 @@ public class CatalogManager {
     public void dropIndex(String IndexName) throws Exception {
         int i = 0;
         for (i = 0; i < IndexNum;i++) {
-            if (I.get(i).getIndexName() == IndexName) break;
+            if (I.get(i).getIndexName().equals(IndexName)) break;
         }
         if (i >= IndexNum) {
             throw new IndexNoExist();
@@ -301,7 +307,7 @@ public class CatalogManager {
     public void dropTable(String TableName) throws Exception {
         int i = 0;
         for (i = 0;i < TableNum;i++) {
-            if (T.get(i).getName() == TableName) break;
+            if (T.get(i).getName().equals(TableName)) break;
         }
         if (i >= TableNum) {
             throw new TableNoExist();
@@ -329,7 +335,7 @@ public class CatalogManager {
 
     public boolean isTableExist(String TableName) {
         for (int i = 0;i < TableNum;i++) {
-            if (T.get(i).getName() == TableName) {
+            if (T.get(i).getName().equals(TableName)) {
                 return true;
             }
         }
@@ -338,9 +344,9 @@ public class CatalogManager {
 
     public boolean TestAttr(String TableName,String AttrName,int type,int length) {
         for (int i = 0;i < TableNum;i++) {
-            if (T.get(i).getName() == TableName){
+            if (T.get(i).getName().equals(TableName)){
                 Table Temp = T.get(i);
-                Value VTemp = Temp.getAttr(AttrName);
+                Value VTemp = Temp.getAttrByName(AttrName);
                 if (VTemp == null) return false;
                 if (VTemp.getType() == type && VTemp.getLength() >= length) return true;
                 return false;
@@ -351,7 +357,7 @@ public class CatalogManager {
 
     public boolean TestAttrOnOrder(String TableName, int num, int type, int length) {
         for (int i = 0;i < TableNum;i++) {
-            if (T.get(i).getName() == TableName) {
+            if (T.get(i).getName().equals(TableName)) {
                 Table Temp = T.get(i);
                 Value VTemp = Temp.getAttr(num);
                 if (VTemp == null) return false;
@@ -363,7 +369,7 @@ public class CatalogManager {
 
     public boolean isIndexExist(String IndexName) {
         for (int i = 0;i < IndexNum;i++) {
-            if (I.get(i).getIndexName() == IndexName) {
+            if (I.get(i).getIndexName().equals(IndexName)) {
                 return true;
             }
         }
@@ -373,7 +379,7 @@ public class CatalogManager {
     public boolean isIndexOnkey(String TableName, String KeyName) {
         int ID = GetTableInformation(TableName).getType();
         for (int i = 0;i < IndexNum;i++) {
-            if (I.get(i).getTableID() == ID && I.get(i).getKeyName() == KeyName) {
+            if (I.get(i).getTableID() == ID && I.get(i).getKeyName().equals(KeyName)) {
                 return true;
             }
         }
@@ -384,7 +390,7 @@ public class CatalogManager {
         Value V = GetTableInformation(TableName);
         if (V == null) throw new TableNoExist();
         for (int i = 0;i< IndexNum;i++) {
-            if (I.get(i).getTableID() == V.getType() && I.get(i).getKeyName() == Key) {
+            if (I.get(i).getTableID() == V.getType() && I.get(i).getKeyName().equals(Key)) {
                 return I.get(i).getIndexName();
             }
         }
@@ -395,17 +401,26 @@ public class CatalogManager {
 
     public boolean findAttr(String TableName,String AttrName) {
         for (int i = 0;i < TableNum;i++) {
-            if (T.get(i).getName() == TableName) {
+            if (T.get(i).getName().equals(TableName)) {
                 return true;
             }
         }
         return false;
     }
 
+    public int findOffset(String TableName, String AttrName) {
+        for (int i = 0;i < TableNum;i++) {
+            if (T.get(i).getName().equals(AttrName)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public Value GetTableInformation(String TableName) {
         Value Vtemp = null;
         for (int i = 0;i < TableNum;i++) {
-            if (T.get(i).getName() == TableName) {
+            if (T.get(i).getName().equals(TableName)) {
                 Vtemp = new Value(T.get(i).getName(),T.get(i).getID(),T.get(i).getLength(),false);
                 // Data -> TableName
                 // Type -> TableID
@@ -458,9 +473,9 @@ class Table {
         attr.add(temp);
     }
 
-    public Value getAttr(String name){
+    public Value getAttrByName(String name){
         for (int i = 0;i < attr.size();i++) {
-            if (attr.get(i).getData() == name)
+            if (attr.get(i).getData().equals(name))
                 return attr.get(i);
         }
         return null;

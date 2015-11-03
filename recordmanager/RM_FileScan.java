@@ -1,8 +1,3 @@
-package recordmanager;
-
-
-import pagedfile.PF_Manager;
-import constant.Constant;
 
 public class RM_FileScan {
 	boolean equal(byte[] value1, byte[] value2, Constant.TYPE type, int attrLenghth) {

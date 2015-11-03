@@ -1,5 +1,3 @@
-package recordmanager;
-import constant.Constant;
 public class RM_Record {
 	RM_Record() {
 		//size = Constant.INVALID_SIZE;
