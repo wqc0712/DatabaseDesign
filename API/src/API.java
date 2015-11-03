@@ -69,8 +69,7 @@ public class API {
 						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 						RM_Record rmr = rmfs.getNextRec();
 						while (rmr != null) {
-							// TODO System.out.println(rmr.getData());
-							System.out.println("HASRESULT!");
+							System.out.println(rmr.getData());
 							rmr = rmfs.getNextRec();
 						}
 					} else 
@@ -189,7 +188,7 @@ public class API {
 			}
 			case 2:{
 				double uu = Double.parseDouble(u); 
-				byte[] b = PF_Manager.doubleTobyteArray(uu);
+				byte[] b = PF_Manager.doubleToByteArray(uu);
 				for (int j = 0; j < b.length; j++)
 					a[i * 256 + j] = b[j];
 				break;
