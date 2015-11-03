@@ -33,23 +33,25 @@ public class PF_PageHandler {
 	
 	public byte[] getPage() throws Exception{
 		int off = (Constant.PAGE_SIZE + Constant.PAGE_HEAD_SIZE)*pageNum + Constant.FILE_HEAD_SIZE + Constant.PAGE_HEAD_SIZE;
-		RandomAccessFile randomAccessFile = new RandomAccessFile (Constant.FILE_PATH+File.separator+file.getFilename(), "r");
+		RandomAccessFile randomAccessFile = new RandomAccessFile (file.getFilename(), "r");
 		byte[] data = new byte[Constant.PAGE_SIZE]; 
-		randomAccessFile.read(data,off,Constant.PAGE_SIZE);
+		randomAccessFile.seek(off);
+		randomAccessFile.read(data,0,Constant.PAGE_SIZE);
 		randomAccessFile.close();
 		return data;
 	}
 	public int getPageHead() throws Exception{
 		int off = (Constant.PAGE_SIZE + Constant.PAGE_HEAD_SIZE)*pageNum + Constant.FILE_HEAD_SIZE;
-		RandomAccessFile randomAccessFile = new RandomAccessFile (Constant.FILE_PATH+File.separator+file.getFilename(), "r");
+		RandomAccessFile randomAccessFile = new RandomAccessFile (file.getFilename(), "r");
 		byte[] data = new byte[Constant.PAGE_HEAD_SIZE]; 
-		randomAccessFile.read(data,off,Constant.PAGE_HEAD_SIZE);
+		randomAccessFile.seek(off);
+		randomAccessFile.read(data,0,Constant.PAGE_HEAD_SIZE);
 		randomAccessFile.close();
 		return PF_Manager.byteArrayToint(data);
 	}
 	public void writePage(byte[] data) throws Exception {
 		int off = (Constant.PAGE_SIZE + Constant.PAGE_HEAD_SIZE)*pageNum + Constant.FILE_HEAD_SIZE + Constant.PAGE_HEAD_SIZE;
-		RandomAccessFile randomAccessFile = new RandomAccessFile (Constant.FILE_PATH+File.separator+file.getFilename(), "rw");
+		RandomAccessFile randomAccessFile = new RandomAccessFile (file.getFilename(), "rw");
 		//randomAccessFile.write(PF_Manager.intTobyteArray(status),off,Constant.PAGE_HEAD_SIZE);
 //		System.out.println(off);
 		randomAccessFile.seek(off);
@@ -58,7 +60,7 @@ public class PF_PageHandler {
 	}
 	public void writePageHead(int head) throws Exception {
 		int off = (Constant.PAGE_SIZE + Constant.PAGE_HEAD_SIZE)*pageNum + Constant.FILE_HEAD_SIZE;
-		RandomAccessFile randomAccessFile = new RandomAccessFile (Constant.FILE_PATH+File.separator+file.getFilename(), "rw");
+		RandomAccessFile randomAccessFile = new RandomAccessFile (file.getFilename(), "rw");
 //		System.out.println(off);
 		randomAccessFile.seek(off);
 		randomAccessFile.write(PF_Manager.intTobyteArray(head));

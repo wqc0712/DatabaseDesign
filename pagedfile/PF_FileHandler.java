@@ -22,7 +22,7 @@ public class PF_FileHandler {
 	}
 	public void writeBackHead() throws Exception{
 		int off = 0;
-		RandomAccessFile randomAccessFile = new RandomAccessFile (Constant.FILE_PATH+File.separator+filename, "rw");
+		RandomAccessFile randomAccessFile = new RandomAccessFile (filename, "rw");
 //		System.out.println(off);
 		randomAccessFile.seek(off);
 		randomAccessFile.write(PF_Manager.intTobyteArray(pageSize));

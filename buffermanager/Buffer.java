@@ -35,13 +35,18 @@ public class Buffer {
 	public boolean isFull() {
 		return LRUList.size() == Constant.MAX_BLOCK_NUM;
 	}
-	public void deleteLRU() {
+	public void deleteLRU() throws Exception{
 		//TODO not support unpinned
 		Integer key = LRUList.getLast().getKey();
+		Hashitem item = hashTable.get(key);
+		item.block.writeBack();
 		LRUList.removeLast();
 		hashTable.remove(key);
 	}
-	public void loadBlock(BufferBlock block) {
+	public void loadBlock(BufferBlock block) throws Exception {
+		if (isFull()) {
+			deleteLRU();
+		}
 		Integer key = getHashKey(block.getFileId(),block.getPageNum());
 		LRUNode node = new LRUNode(key);
 		Hashitem item = new Hashitem(node,block);
