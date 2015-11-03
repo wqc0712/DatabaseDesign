@@ -6,7 +6,7 @@ public class Value {
     private int Type;							/*	The type of the data. */
     private int Length;							/*	The maximum length of the data if its type is string.	*/
     private Boolean Unique;						/*	Weather this attrbute is unique.	*/
-
+    											/*	The primary key must be unique, if not error happens!!!	*/
     public Value(String A,int B,int C,Boolean D) {
         Data = A;
         Type = B;
