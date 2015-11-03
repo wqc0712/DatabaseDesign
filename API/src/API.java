@@ -29,6 +29,7 @@ public class API {
 		if (cm.isTableExist(table_Name)) {
 			try {
 				rm.destoryFile(table_Name);
+				CatalogManager.getInstance().dropTable(table_Name);
 			} catch  (Exception e) {
 				throw e;
 			} finally {
@@ -68,7 +69,8 @@ public class API {
 						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 						RM_Record rmr = rmfs.getNextRec();
 						while (rmr != null) {
-							System.out.println(rmr.getData());
+							// TODO System.out.println(rmr.getData());
+							System.out.println("HASRESULT!");
 							rmr = rmfs.getNextRec();
 						}
 					} else 
@@ -96,9 +98,9 @@ public class API {
 			}
 			if (judge) {
 				try {
-					System.out.println("insert record");
 					RM_FileHandler rmf = rm.openFile(table_Name);
 					rmf.insertRec(String2Byte(attr));
+					rm.closeFile(rmf);
 				} catch (Exception e) {
 					throw e;
 				} finally {
