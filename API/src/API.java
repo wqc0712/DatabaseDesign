@@ -172,9 +172,29 @@ public class API {
 		byte[] a;
 		a = new byte[attr.size() * 256];
 		for (int i = 0; i < attr.size(); i++){
-			char[] u = attr.get(i).getData().toCharArray();
-			for (int j = 0; j < u.length; j++)
-				a[i * 256 + j] = (byte) (u[j] & 0xFF);
+			String u = attr.get(i).getData();
+			switch (attr.get(i).getType()) {
+			case 0:{
+				int uu = Integer.parseInt(u); 
+				byte[] b = PF_Manager.intTobyteArray(uu);
+				for (int j = 0; j < b.length; j++)
+					a[i * 256 + j] = b[j];
+				break;
+			}
+			case 1:{
+				byte[] b = u.getBytes();
+				for (int j = 0; j < b.length; j++)
+					a[i * 256 + j] = b[j];
+				break;
+			}
+			case 2:{
+				double uu = Double.parseDouble(u); 
+				byte[] b = PF_Manager.doubleTobyteArray(uu);
+				for (int j = 0; j < b.length; j++)
+					a[i * 256 + j] = b[j];
+				break;
+			}
+			}
 		}
 		return a;
 	}
