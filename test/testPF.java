@@ -47,8 +47,9 @@ public class testPF {
 			pfManager.writeBack(fileHandler, pageNum);
 			BufferBlock block = pfManager.getBlock(fileHandler, pageNum);
 			block.setData(indata2);
-			data = pfManager.getBlockData(fileHandler, pageNum);
-			
+			data = pfManager.getBlockData(fileHandler, pageNum2);
+			data = pfManager.getBlockData(fileHandler, pageNum3);
+			data = pfManager.getBlockData(fileHandler, pageNum4);
 			System.out.println(indata2);
 			System.out.println(data);
 			

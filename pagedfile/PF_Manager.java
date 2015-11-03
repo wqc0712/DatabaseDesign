@@ -18,7 +18,7 @@ public class PF_Manager {
 		System.out.println(s);
 	}
 	public static String fileLocation(String filename) {
-		return new String(Constant.FILE_PATH+"\\"+filename);
+		return new String(filename);
 	}
 	public static byte[] intTobyteArray(int num) {  
 	    byte[] result = new byte[4];  
