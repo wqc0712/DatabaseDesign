@@ -13,7 +13,7 @@ public class API {
 	static API manager = new API();
 	private static RM_Manager rm = RM_Manager.getInstance();
 	private static CatalogManager cm = CatalogManager.getInstance();
-		
+	
 	private static byte[] _att;
 	private static API Instant = new API();
 	public static API getInstance() { return manager;}
@@ -83,7 +83,7 @@ public class API {
 						break;
 					}
 					if (judge) {
-																								/* I need a function about knowwing weather it comes to the end of table*/
+//						RM_FileScan rmfs = new RM_FileScan(rmf, );
 					} else
 						throw new Exception("Error: attributes are not corresponding to the table.");
 				} catch (Exception e) {

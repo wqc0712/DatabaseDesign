@@ -2,10 +2,10 @@
  * Created by tom on 15/10/26.
  */
 public class Value {
-    private String Data;
-    private int Type;
-    private int Length;
-    private Boolean Unique;
+    private String Data;						/*	The data.	*/
+    private int Type;							/*	The type of the data. */
+    private int Length;							/*	The maximum length of the data if its type is string.	*/
+    private Boolean Unique;						/*	Weather this attrbute is unique.	*/
 
     public Value(String A,int B,int C,Boolean D) {
         Data = A;
