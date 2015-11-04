@@ -70,7 +70,7 @@ public class API {
 						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 						RM_Record rmr = rmfs.getNextRec();
 						
-						prePrintOut();
+						prePrintOut(rmr.getData());
 						while (rmr != null) {
 							formatPrintOut(rmr.getData());
 //							System.out.println(rmr.getData());			/*this place has bugs. must have format.*/
@@ -178,8 +178,12 @@ public class API {
 			System.out.println("Error: do not have this table.");
 //			throw new Exception("Error: do not have this table. "); 
 	}
-	private static void prePrintOut() {
-		
+	private static void prePrintOut(byte[] data) {
+		for (int i = 0; i < (int)(data.length / 256); i++) {
+			for (int j = 0; j < 256; j++) {
+				
+			}
+		}
 	}
 	
 	private static void formatPrintOut(byte[] data) {	
