@@ -69,7 +69,7 @@ public class API {
 						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 						RM_Record rmr = rmfs.getNextRec();
 						while (rmr != null) {
-							System.out.println(rmr.getData());
+							System.out.println(rmr.getData());			/*this place has bugs. must have format.*/
 							rmr = rmfs.getNextRec();
 						}
 					} else 
