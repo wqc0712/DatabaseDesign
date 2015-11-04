@@ -69,8 +69,11 @@ public class API {
 						temp.add(attr.get(0).getValue());
 						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 						RM_Record rmr = rmfs.getNextRec();
+						
+						prePrintOut();
 						while (rmr != null) {
-							System.out.println(rmr.getData());			/*this place has bugs. must have format.*/
+							formatPrintOut(rmr.getData());
+//							System.out.println(rmr.getData());			/*this place has bugs. must have format.*/
 							rmr = rmfs.getNextRec();
 						}
 					} else
@@ -151,10 +154,13 @@ public class API {
 								temp.add(attr.get(0).getValue());
 								RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 								RM_Record rmr = rmfs.getNextRec();
+								int count = 0;
 								while (rmr != null) {
+									count ++;
 									rmf.deleteRec(rmr.getRid());
 									rmr = rmfs.getNextRec();
 								}
+								System.out.println("Successfully delete "+count+" lines.");
 							} else
 								System.out.println("Error: where condition is wrong!");
 //								throw new Exception("Error: the where condition is wrong!");
@@ -172,7 +178,17 @@ public class API {
 			System.out.println("Error: do not have this table.");
 //			throw new Exception("Error: do not have this table. "); 
 	}
+	private static void prePrintOut() {
+		
+	}
 	
+	private static void formatPrintOut(byte[] data) {	
+		for (int i = 0; i < (int)(data.length / 256); i++) {
+			for (int j = 0; j < 256; j++) {
+				
+			}
+		}
+	}
 	private static byte[] String2Byte(ArrayList<Value> attr) {
 		byte[] a;
 		a = new byte[attr.size() * 256];
