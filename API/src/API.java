@@ -54,7 +54,7 @@ public class API {
 						case 2: type = Constant.TYPE.DOUBLE; length = 8;break;
 						}
 						
-						int offset = cm.findOffset(table_Name, attr.get(0).getID());
+						int offset = cm.findOffset(table_Name, attr.get(0).getID())*256;
 						
 						Constant.COMP_OP op = null;
 						switch (attr.get(0).getOP()) {
@@ -69,7 +69,7 @@ public class API {
 						temp.add(attr.get(0).getValue());
 						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 						RM_Record rmr = rmfs.getNextRec();
-						
+
 						prePrintOut(rmr.getData());
 						while (rmr != null) {
 							formatPrintOut(rmr.getData());
@@ -139,7 +139,7 @@ public class API {
 								case 2: type = Constant.TYPE.DOUBLE; length = 8;break;
 								}
 								
-								int offset = cm.findOffset(table_Name, attr.get(0).getID());
+								int offset = cm.findOffset(table_Name, attr.get(0).getID())*256;
 								
 								Constant.COMP_OP op = null;
 								switch (attr.get(0).getOP()) {
