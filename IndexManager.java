@@ -34,7 +34,6 @@ public class IndexManager{
 		Table table = find_Table(tableName);
 		BPlusTree thisTree = new BPlusTree(index); //创建一棵新树
 		
-	    	//开始正式建立索引
 		String filename = tableName + ".table";       	
 		try{
 			RM_FileHandler rmf = RM_Manager.getInstance().openFile(filename);
@@ -42,20 +41,11 @@ public class IndexManager{
 			RM_Record rmr = rmfs.getNextRec();
 			
 			while (rmr != null) {
-				
+				byte[] Record = rmr.getData();
+				byte[] key = getColumnValue(tableName, index, Record);
+				thisTree.insert(key, rmr.getRid().getPageNum(), rmr.getRid().getSlotNum());
 				rmr = rmfs.getNextRec();
 			}
-//	   		for(int blockOffset = 0; blockOffset < table.blockNum; blockOffset++){
-//	   		BufferBlock block = buffer.readBlock(filename, blockOffset);			/*Buffer Manager needs to define a function called readBlock.*/
-//	   		for(int offset = 0; offset < block.get_recordNum(); offset++){			/*BufferBlock needs to define a function to get recordNum of a block.*/
-//	   				int position = offset * table.get_recordLength();					/*Table class needs to define a get_recoredLength function.*/ 
-//	   				byte[] Record = block.getBytes(position, table.recordLength); 		/*Read each record of the block, we need to provide position and each record's Length.*/
-//	   				//if(Record.isEmpty()) break;
-//	   				byte[] key=getColumnValue(tableName, index, Record); //找出索引值
-//	   				thisTree.insert(key, blockOffset, offset); //插入树中
-//	   			}
-//	   		}
-
 	    } catch (NullPointerException e){
 	   		System.err.println("must not be null for key.");
 	    } catch (Exception e){
@@ -63,7 +53,7 @@ public class IndexManager{
 	    }
 	   
 	   //index.rootNum=thisTree.myRootBlock.blockOffset;
-	   	CatalogManager.setIndexRoot(index.indexName, thisTree.myRootBlock.blockOffset);
+//	   	CatalogManager.setIndexRoot(index.indexName, thisTree.myRootBlock.blockOffset);
 	   
 		System.out.println("Create index successfully!");
 	}

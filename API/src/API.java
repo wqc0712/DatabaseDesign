@@ -70,9 +70,9 @@ public class API {
 						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 						RM_Record rmr = rmfs.getNextRec();
 
-						prePrintOut(rmr.getData());
+						prePrintOut(tableName);
 						while (rmr != null) {
-							formatPrintOut(rmr.getData());
+							formatPrintOut(rmr, tableName);
 //							System.out.println(rmr.getData());			/*this place has bugs. must have format.*/
 							rmr = rmfs.getNextRec();
 						}
@@ -178,18 +178,47 @@ public class API {
 			System.out.println("Error: do not have this table.");
 //			throw new Exception("Error: do not have this table. "); 
 	}
-	private static void prePrintOut(byte[] data) {
-		for (int i = 0; i < (int)(data.length / 256); i++) {
-			for (int j = 0; j < 256; j++) {
-				
-			}
+	private static void prePrintOut(String tableName) {
+		Value table_ = cm.GetTableInformation(tableName);
+		Value attr_;
+		for (int i = 0; i < table_.getLength(); i++) {
+			attr_ = cm.GetAttrInformation(tableName, i);
+			System.out.print(attr_.getData()); 
+			System.out.print(" ");
+		}
+		System.out.println();
+		for (int i = 0; i < table_.getLength(); i++) {
+			attr_ = cm.GetAttrInformation(tableName, i);
+			for (int j = 0; j < attr_.getLength() + 1; j++)
+				System.out.print("_");
 		}
 	}
 	
-	private static void formatPrintOut(byte[] data) {	
-		for (int i = 0; i < (int)(data.length / 256); i++) {
-			for (int j = 0; j < 256; j++) {
-				
+	private static void formatPrintOut(RM_Record rmr, String tableName) {	
+		Value table_ = cm.GetTableInformation(tableName);
+		Value attr_;
+		for (int i = 0; i < table_.getLength(); i++) {
+			attr_ = cm.GetAttrInformation(tableName, i);
+			byte [] temp = new byte[256];
+			System.arraycopy(rmr.getData(), i * 256, temp, 0, 256);
+			switch (attr_.getType()) {
+			case 0:{
+				System.out.print(PF_Manager.byteArrayToint(temp) + " ");
+				break;
+			}
+			case 1:{
+				for (int j = 0; j < 256; j++)
+				if (temp[j] != 0) {
+					System.out.print(temp[j]);
+				} else 
+					break;
+				System.out.print(" ");
+				break;
+			}
+			case 2:{
+				System.out.print(PF_Manager.byteArrayToDouble(temp) + " ");
+				break;
+			}
 			}
 		}
 	}
@@ -210,6 +239,8 @@ public class API {
 				byte[] b = u.getBytes();
 				for (int j = 0; j < b.length; j++)
 					a[i * 256 + j] = b[j];
+				for (int j = b.length; j < 256; j++)
+					a[i * 256 + j] = 0;
 				break;
 			}
 			case 2:{
