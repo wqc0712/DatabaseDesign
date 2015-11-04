@@ -82,7 +82,6 @@ public class Buffer {
 		int fileId = fileHandler.getFileId();
 		BufferBlock block = getBlock(fileId, pageNum);
 		if (block != null) {
-			System.out.println("block get in buffer");
 			return block;
 		}
 		return loadPage(fileHandler, pageNum);

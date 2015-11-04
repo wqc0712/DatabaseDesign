@@ -47,7 +47,7 @@ public class RM_FileHandler {
 			header.firstFreePage = pageNum; 
 		} 
 		int pageNum = header.firstFreePage;
-		System.out.println(pageNum);
+		//System.out.println(pageNum);
 		byte[] pageData = pfh.getBlockData(header.firstFreePage);
 		RM_PageHandler pageHandler =  RM_PageHandler.parsePageData(pageData,header.bitmapSize);
 		int slotNum = pageHandler.getFirstFreeBit();

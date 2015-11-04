@@ -33,6 +33,10 @@ public class Value {
         return Length;
     }
 
+    public void setUnique() {
+        Unique = true;
+    }
+
     public Boolean IsUnique(){
         return Unique;
     }

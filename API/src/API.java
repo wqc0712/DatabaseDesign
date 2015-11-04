@@ -16,14 +16,13 @@ public class API {
 			try {
 				cm.addTable(table_Name, attr.size(), attr, primary_Key);
 				rm.createFile(table_Name, attr.size() * 256);
-				System.out.println("Successfully create table "+table_Name+".");
 			} catch  (Exception e) {
-				System.out.println(e);
-//				throw e;
+				throw e;
+			} finally {
+				/*useless*/
 			}
 		} else
-			System.out.println("Error: the table name has been already used.");
-//			throw new Exception("Error: the table name has been already used.");
+			throw new Exception("Error: the table name has been already used.");
 	}
 
 	public void drop_table(String table_Name) throws Exception{
@@ -31,20 +30,21 @@ public class API {
 			try {
 				rm.destoryFile(table_Name);
 				CatalogManager.getInstance().dropTable(table_Name);
-				System.out.println("Drop table "+table_Name+" successfully.");
 			} catch  (Exception e) {
-				System.out.println(e);
+				throw e;
+			} finally {
+				/*useless*/
 			}
 		} else
-			System.out.println("Error: do not have this table.");
-//			throw new Exception("Error: do not have this table.");
+			throw new Exception("Error: do not have this table.");
 	}
 	
 	public void select_from (String table_Name, ArrayList<CondExpr> attr) throws Exception{
 		if (cm.isTableExist(table_Name)) {
 			try {
 				RM_FileHandler rmf = rm.openFile(table_Name);
-				if (attr.size() == 1) {							/*	If there is only one condition in where statement.	*/
+
+				if (attr.size() == 1) {
 					if (cm.TestAttr(table_Name, attr.get(0).getID(), attr.get(0).getValue().getType(), attr.get(0).getValue().getLength())){ /*The last parameter may have some problem.*/
 						Constant.TYPE type = null;
 						int length = 0;
@@ -53,9 +53,8 @@ public class API {
 						case 1: type = Constant.TYPE.STRING; length = attr.get(0).getValue().getLength();break;	/*This may have some problem about attrbute's length. */
 						case 2: type = Constant.TYPE.DOUBLE; length = 8;break;
 						}
-						
-						int offset = cm.findOffset(table_Name, attr.get(0).getID());
-						
+						int offset = cm.findOffset(table_Name, attr.get(0).getID())*256;
+						//TODO change Offset;
 						Constant.COMP_OP op = null;
 						switch (attr.get(0).getOP()) {
 						case "=": op = Constant.COMP_OP.EQ_OP; break;
@@ -67,29 +66,26 @@ public class API {
 						}
 						ArrayList<Value> temp = new ArrayList<>();
 						temp.add(attr.get(0).getValue());
+						byte[] TT = String2Byte(temp);
 						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 						RM_Record rmr = rmfs.getNextRec();
-						
-						prePrintOut(rmr.getData());
 						while (rmr != null) {
-							formatPrintOut(rmr.getData());
-//							System.out.println(rmr.getData());			/*this place has bugs. must have format.*/
+							System.out.println(rmr.getData());
 							rmr = rmfs.getNextRec();
 						}
-					} else
-						System.out.println("Error: the where condition is wrong!");
-//						throw new Exception("Error: the where condition is wrong!");
-				} else {								/*	If there is more than one condition in where statement.	*/
+					} else 
+						throw new Exception("Error: the where condition is wrong!");
+				} else {
 					/*	Use Index...	*/
-					
 				}
 				
 			} catch (Exception e) {
-				System.out.println(e);
+				
+			} finally {
+				
 			}
-		} else
-			System.out.println("do not have this table.");
-//			throw new Exception("do not have this table");
+		} else 
+			throw new Exception("do not have this table");
 	}
 
 	public void insert_table(String table_Name, ArrayList<Value> attr) throws Exception{
@@ -111,11 +107,9 @@ public class API {
 					/*useless*/
 				}
 			} else
-				System.out.println("Error: attributes are not cooresponding to the table.");
-//				throw new Exception("Error: attributes are not corresponding to the table.");
-		} else
-			System.out.println("Error: do not have this table.");
-//			throw new Exception("Error: do not have this table.");
+				throw new Exception("Error: attributes are not correspongding to the table.");
+		} else 
+			throw new Exception("Error: do not have this table.");
 	}
 	
 	public void delete_record(String table_Name, ArrayList<CondExpr> attr) throws Exception{
@@ -129,7 +123,7 @@ public class API {
 						break;
 					}
 					if (judge) {
-						if (attr.size() == 1) {						/*	If there is only one condition in where statement.	*/
+						if (attr.size() == 1) {
 							if (cm.TestAttr(table_Name, attr.get(0).getID(), attr.get(0).getValue().getType(), attr.get(0).getValue().getLength())){ /*The last parameter may have some problem.*/
 								Constant.TYPE type = null;
 								int length = 0;
@@ -139,8 +133,8 @@ public class API {
 								case 2: type = Constant.TYPE.DOUBLE; length = 8;break;
 								}
 								
-								int offset = cm.findOffset(table_Name, attr.get(0).getID());
-								
+								int offset = cm.findOffset(table_Name, attr.get(0).getID())*256;
+								//TODO change offset;
 								Constant.COMP_OP op = null;
 								switch (attr.get(0).getOP()) {
 								case "=": op = Constant.COMP_OP.EQ_OP; break;
@@ -154,45 +148,26 @@ public class API {
 								temp.add(attr.get(0).getValue());
 								RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 								RM_Record rmr = rmfs.getNextRec();
-								int count = 0;
 								while (rmr != null) {
-									count ++;
 									rmf.deleteRec(rmr.getRid());
 									rmr = rmfs.getNextRec();
 								}
-								System.out.println("Successfully delete "+count+" lines.");
-							} else
-								System.out.println("Error: where condition is wrong!");
-//								throw new Exception("Error: the where condition is wrong!");
-						} else {							/*	If there is more than one condition in where statement.	*/
+							} else 
+								throw new Exception("Error: the where condition is wrong!");
+						} else {
 							/*	Use Index...	*/
-							
 						}
 					} else
-						System.out.println("Error: attributes are not corresponding to the table.");
-//						throw new Exception("Error: attributes are not corresponding to the table.");
+						throw new Exception("Error: attributes are not corresponding to the table.");
 				} catch (Exception e) {
-					System.out.println(e);
+					throw e;
+				} finally {
+					/*useless*/
 				}
 		} else
-			System.out.println("Error: do not have this table.");
-//			throw new Exception("Error: do not have this table. "); 
-	}
-	private static void prePrintOut(byte[] data) {
-		for (int i = 0; i < (int)(data.length / 256); i++) {
-			for (int j = 0; j < 256; j++) {
-				
-			}
-		}
+			throw new Exception("Error: do not have this table. "); 
 	}
 	
-	private static void formatPrintOut(byte[] data) {	
-		for (int i = 0; i < (int)(data.length / 256); i++) {
-			for (int j = 0; j < 256; j++) {
-				
-			}
-		}
-	}
 	private static byte[] String2Byte(ArrayList<Value> attr) {
 		byte[] a;
 		a = new byte[attr.size() * 256];

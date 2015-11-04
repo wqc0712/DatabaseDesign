@@ -26,7 +26,7 @@ public class PF_Manager {
 	}
 	public static int byteArrayToint(byte[] b){  
 	    byte[] a = new byte[4];  
-	    int i = a.length - 1,j = b.length - 1;  
+	    int i = a.length - 1,j = 3;
 	    for (; i >= 0 ; i--,j--) { 
 	        if(j >= 0)  
 	            a[i] = b[j];  
@@ -67,7 +67,7 @@ public class PF_Manager {
 	    }  
 	    return b;
 	}  
-	public static void creatFile(String filename) throws Exception {
+	public  void creatFile(String filename) throws Exception {
 		print(fileLocation(filename));
 		File file = new File(fileLocation(filename));
 		if (file.exists()) {
@@ -85,8 +85,14 @@ public class PF_Manager {
 		out.writeInt(Constant.FILE_FREE_END);
 		out.close();
 	}
-	public static void destoryFile(String filename) throws Exception {
+	public  void destoryFile(String filename) throws Exception {
 		File file = new File(fileLocation(filename));
+		for (PF_FileHandler fileHandler : fileHandlerList) {
+			if (fileHandler.getFilename().equals(filename)) {
+				fileHandlerList.remove(fileHandler);
+				break;
+			}
+		}
 		if (!file.delete()){
 			throw new FileRemoveException();
 		}

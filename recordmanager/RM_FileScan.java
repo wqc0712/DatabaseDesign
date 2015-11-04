@@ -58,7 +58,8 @@ public class RM_FileScan {
 		fileHandler = fileHandler_;
 		type = type_;
 		attrOffset = attrOffset_;
-		value1 = value;
+		value1 = new byte[attrLength_];
+		System.arraycopy(value,0,value1,0,attrLength_);
 		attrLength = attrLength_;
 		compOp = compOp_;
 		currentPage = 1;
@@ -67,6 +68,7 @@ public class RM_FileScan {
 	}
 	public RM_Record getNextRec() throws Exception{
 		RID nextRid = fileHandler.getNextRec(curRid);
+		//System.out.println(attrLength+" "+new String(value1));
 		curRid = nextRid;
 		if (nextRid == null) return null;
 		RM_Record nextRec = fileHandler.getRec(nextRid);
@@ -82,7 +84,7 @@ public class RM_FileScan {
 		case NO_OP: return nextRec; 
 		default : break;
 		}
-		
+
 		return getNextRec();
 	}
 	RM_FileHandler fileHandler;

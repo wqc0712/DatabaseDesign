@@ -64,7 +64,7 @@ public class Main {
                     parser.setErrorHandler(new ErrorStrategy());
                     visitor.visit(tree);
                     Context.getInstance().push();
-                    visitor.print();
+                   // visitor.print();
                     if (Context.getInstance().getError()) throw new Exception();
                 } catch (Exception e) {
                     continue;
