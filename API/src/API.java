@@ -16,13 +16,14 @@ public class API {
 			try {
 				cm.addTable(table_Name, attr.size(), attr, primary_Key);
 				rm.createFile(table_Name, attr.size() * 256);
+				System.out.println("Successfully create table "+table_Name+".");
 			} catch  (Exception e) {
-				throw e;
-			} finally {
-				/*useless*/
+				System.out.println(e);
+//				throw e;
 			}
 		} else
-			throw new Exception("Error: the table name has been already used.");
+			System.out.println("Error: the table name has been already used.");
+//			throw new Exception("Error: the table name has been already used.");
 	}
 
 	public void drop_table(String table_Name) throws Exception{
@@ -30,20 +31,20 @@ public class API {
 			try {
 				rm.destoryFile(table_Name);
 				CatalogManager.getInstance().dropTable(table_Name);
+				System.out.println("Drop table "+table_Name+" successfully.");
 			} catch  (Exception e) {
-				throw e;
-			} finally {
-				/*useless*/
+				System.out.println(e);
 			}
 		} else
-			throw new Exception("Error: do not have this table.");
+			System.out.println("Error: do not have this table.");
+//			throw new Exception("Error: do not have this table.");
 	}
 	
 	public void select_from (String table_Name, ArrayList<CondExpr> attr) throws Exception{
 		if (cm.isTableExist(table_Name)) {
 			try {
 				RM_FileHandler rmf = rm.openFile(table_Name);
-				if (attr.size() == 1) {
+				if (attr.size() == 1) {							/*	If there is only one condition in where statement.	*/
 					if (cm.TestAttr(table_Name, attr.get(0).getID(), attr.get(0).getValue().getType(), attr.get(0).getValue().getLength())){ /*The last parameter may have some problem.*/
 						Constant.TYPE type = null;
 						int length = 0;
@@ -72,19 +73,20 @@ public class API {
 							System.out.println(rmr.getData());			/*this place has bugs. must have format.*/
 							rmr = rmfs.getNextRec();
 						}
-					} else 
-						throw new Exception("Error: the where condition is wrong!");
-				} else {
+					} else
+						System.out.println("Error: the where condition is wrong!");
+//						throw new Exception("Error: the where condition is wrong!");
+				} else {								/*	If there is more than one condition in where statement.	*/
 					/*	Use Index...	*/
+					
 				}
 				
 			} catch (Exception e) {
-				
-			} finally {
-				
+				System.out.println(e);
 			}
-		} else 
-			throw new Exception("do not have this table");
+		} else
+			System.out.println("do not have this table.");
+//			throw new Exception("do not have this table");
 	}
 
 	public void insert_table(String table_Name, ArrayList<Value> attr) throws Exception{
@@ -106,9 +108,11 @@ public class API {
 					/*useless*/
 				}
 			} else
-				throw new Exception("Error: attributes are not correspongding to the table.");
-		} else 
-			throw new Exception("Error: do not have this table.");
+				System.out.println("Error: attributes are not cooresponding to the table.");
+//				throw new Exception("Error: attributes are not corresponding to the table.");
+		} else
+			System.out.println("Error: do not have this table.");
+//			throw new Exception("Error: do not have this table.");
 	}
 	
 	public void delete_record(String table_Name, ArrayList<CondExpr> attr) throws Exception{
@@ -122,7 +126,7 @@ public class API {
 						break;
 					}
 					if (judge) {
-						if (attr.size() == 1) {
+						if (attr.size() == 1) {						/*	If there is only one condition in where statement.	*/
 							if (cm.TestAttr(table_Name, attr.get(0).getID(), attr.get(0).getValue().getType(), attr.get(0).getValue().getLength())){ /*The last parameter may have some problem.*/
 								Constant.TYPE type = null;
 								int length = 0;
@@ -151,20 +155,22 @@ public class API {
 									rmf.deleteRec(rmr.getRid());
 									rmr = rmfs.getNextRec();
 								}
-							} else 
-								throw new Exception("Error: the where condition is wrong!");
-						} else {
+							} else
+								System.out.println("Error: where condition is wrong!");
+//								throw new Exception("Error: the where condition is wrong!");
+						} else {							/*	If there is more than one condition in where statement.	*/
 							/*	Use Index...	*/
+							
 						}
 					} else
-						throw new Exception("Error: attributes are not corresponding to the table.");
+						System.out.println("Error: attributes are not corresponding to the table.");
+//						throw new Exception("Error: attributes are not corresponding to the table.");
 				} catch (Exception e) {
-					throw e;
-				} finally {
-					/*useless*/
+					System.out.println(e);
 				}
 		} else
-			throw new Exception("Error: do not have this table. "); 
+			System.out.println("Error: do not have this table.");
+//			throw new Exception("Error: do not have this table. "); 
 	}
 	
 	private static byte[] String2Byte(ArrayList<Value> attr) {
