@@ -20,7 +20,7 @@ public class CatalogManager {
         I = new ArrayList<>();
         T = new ArrayList<>();
         try {
-            PF_Manager.creatFile("Catalog");
+            PF_Manager.getInstance().creatFile("Catalog");
             PF = PF_Manager.getInstance().openFile("Catalog");
             System.out.println("Create Success");
         } catch (FileExistExpection e) {
@@ -39,12 +39,11 @@ public class CatalogManager {
             e.printStackTrace();
         }
         if (B != null) {
-            System.out.print("Begin!");
             int BlockIndex = 1;
             byte[] Data = B.getData();
             byte[] Temp;
             int Where = 0;
-            Temp = Arrays.copyOfRange(Data,Where,Where+3);
+            Temp = Arrays.copyOfRange(Data,Where,Where+4);
             TableNum = PF_Manager.byteArrayToint(Temp);
             Where = 4;
             for (int i = 0;i < TableNum;i++) {
@@ -58,13 +57,13 @@ public class CatalogManager {
                     }
                     Where = 0;
                 }
-                int id = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+3));
+                int id = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+4));
                 Where = Where + 4;
-                Temp = Arrays.copyOfRange(Data,Where,Where+255);
+                Temp = Arrays.copyOfRange(Data,Where,Where+256);
                 String name = ByteToString(Temp);
                 Where = Where + 256;
                 int AttrNum;
-                AttrNum = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+3));
+                AttrNum = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+4));
                 Where = Where + 4;
                 Table Ttemp = new Table(id,name,AttrNum);
                 for (int j = 0;j < AttrNum;j++) {
@@ -83,14 +82,14 @@ public class CatalogManager {
                     int length;
                     int uni;
                     Boolean U;
-                    Temp = Arrays.copyOfRange(Data,Where,Where+255);
+                    Temp = Arrays.copyOfRange(Data,Where,Where+256);
                     Sname = ByteToString(Temp);
                     Where = Where+ 256;
-                    type = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+3));
+                    type = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+4));
                     Where = Where + 4;
-                    length = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+3));
+                    length = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+4));
                     Where = Where + 4;
-                    uni = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+3));
+                    uni = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+4));
                     if (uni == 1) U = true; else U = false;
                     Where = Where + 4;
                     Ttemp.addAttr(Sname,type,length,U);
@@ -107,7 +106,7 @@ public class CatalogManager {
                 }
                 Where = 0;
             }
-            IndexNum = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+3));
+            IndexNum = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+4));
             Where = Where + 4;
             for (int i = 0; i < IndexNum;i++) {
                 if (Where + 520 > 8192) {
@@ -124,34 +123,34 @@ public class CatalogManager {
                 String name;
                 int TableID;
                 String key;
-                ID = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+3));
+                ID = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+4));
                 Where = Where + 4;
-                Temp = Arrays.copyOfRange(Data,Where,Where+255);
+                Temp = Arrays.copyOfRange(Data,Where,Where+256);
                 name = ByteToString(Temp);
                 Where = Where + 256;
-                TableID = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+3));
+                TableID = PF_Manager.byteArrayToint(Arrays.copyOfRange(Data,Where,Where+4));
                 Where = Where + 4;
-                Temp = Arrays.copyOfRange(Data,Where,Where+255);
+                Temp = Arrays.copyOfRange(Data,Where,Where+256);
                 key = ByteToString(Temp);
                 Where = Where + 256;
                 I.add(new Index(ID,name,TableID,key));
             }
-            try {
-                PF_Manager.getInstance().closeFile(PF);
-            } catch (Exception e) {
 
-            }
             if (IndexNum > 0) MaxIndex = I.get(IndexNum-1).getID()+1;
             if (TableNum > 0) MaxTable = T.get(TableNum-1).getID()+1;
         }
-        System.out.println(TableNum);
+        try {
+            PF_Manager.getInstance().closeFile(PF);
+        } catch (Exception e) {
+
+        }
     }
 
     public void WriteBack (){
         System.out.println("finalize");
         try {
-            PF_Manager.destoryFile("Catalog");
-            PF_Manager.creatFile("Catalog");
+            PF_Manager.getInstance().destoryFile("Catalog");
+            PF_Manager.getInstance().creatFile("Catalog");
             PF = PF_Manager.getInstance().openFile("Catalog");
         } catch (Exception err) {
             System.err.println("Error in open file Catalog!");
@@ -252,7 +251,6 @@ public class CatalogManager {
 
         if (Where > 0) {
             try {
-                System.out.println(Block);
                 PF.addPage(Block);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -328,6 +326,17 @@ public class CatalogManager {
     public void addTable(String TableName,int num, ArrayList<Value> attr,String PK) throws Exception {
         // Must Run isTableExist First
         TableNum = TableNum+1;
+        Value Temp;
+        for (int i = 0;i< attr.size();i++) {
+            if (attr.get(i).getData().equals(PK)) {
+                attr.get(i).setUnique();
+                break;
+            }
+            if (i == attr.size()-1) {
+                throw new  PrimaryKeyNotFound();
+            }
+        }
+
         T.add(new Table(MaxTable,TableName,num,attr));
         addIndex("_"+TableName,TableName,PK);
         MaxTable = MaxTable + 1;
@@ -348,7 +357,7 @@ public class CatalogManager {
                 Table Temp = T.get(i);
                 Value VTemp = Temp.getAttrByName(AttrName);
                 if (VTemp == null) return false;
-                if (VTemp.getType() == type && VTemp.getLength() >= length) return true;
+                if (VTemp.getType() == type && VTemp.getLength() == length) return true;
                 return false;
             }
         }
@@ -361,7 +370,7 @@ public class CatalogManager {
                 Table Temp = T.get(i);
                 Value VTemp = Temp.getAttr(num);
                 if (VTemp == null) return false;
-                if (VTemp.getType() == type && VTemp.getLength() >= length) return true;
+                if (VTemp.getType() == type && VTemp.getLength() == length) return true;
             }
         }
         return false;
@@ -402,7 +411,7 @@ public class CatalogManager {
     public boolean findAttr(String TableName,String AttrName) {
         for (int i = 0;i < TableNum;i++) {
             if (T.get(i).getName().equals(TableName)) {
-                return true;
+              if (T.get(i).getAttrByName(AttrName) != null) return true;
             }
         }
         return false;
@@ -410,11 +419,20 @@ public class CatalogManager {
 
     public int findOffset(String TableName, String AttrName) {
         for (int i = 0;i < TableNum;i++) {
-            if (T.get(i).getName().equals(AttrName)) {
-                return i;
+            if (T.get(i).getName().equals(TableName)) {
+                for (int j = 0;j < T.get(i).getLength();j++) {
+                    if (T.get(i).getAttr(j).getData().equals(AttrName)) return j;
+                }
             }
         }
         return -1;
+    }
+
+    public Value GetAttrInformation(String TableName,int Offset) {
+        for (int i = 1;i < T.size();i++) {
+            if (T.get(i).getName().equals(TableName)) return T.get(i).getAttr(Offset);
+        }
+        return null;
     }
 
     public Value GetTableInformation(String TableName) {
@@ -435,7 +453,7 @@ public class CatalogManager {
         String Temp = new String(s);
         int i = Temp.length();
         while (i < 256) {
-            Temp = Temp + '*';
+            Temp = Temp + '#';
             i = i + 1;
         }
         return Temp.getBytes();
@@ -443,8 +461,14 @@ public class CatalogManager {
     }
     public String ByteToString(byte[] b) {
         String s = new String(b);
-        s.replace("*","");
-        return s;
+        String ST = new String();
+        for (int i = 0;i < s.length();i++) {
+            if (s.charAt(i) == '#') {
+                break;
+            }
+            ST = ST + s.charAt(i);
+        }
+        return ST;
     }
 
 }
@@ -459,6 +483,7 @@ class Table {
         ID = a;
         name = b;
         length = c;
+        attr = new ArrayList<>();
     }
 
     public Table(int a,String B,int c,ArrayList<Value> d){
