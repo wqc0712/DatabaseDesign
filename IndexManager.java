@@ -1,4 +1,8 @@
+import com.sun.org.apache.bcel.internal.generic.Type;
+import constant.*;
 import buffermanager.*;
+import recordmanager.*;
+import pagedfile.*;
 
 public class IndexManager{
 	 
@@ -10,11 +14,11 @@ public class IndexManager{
 		
 	//找出需要插入的索引值
 	private static byte[] getColumnValue(String tableName, Index index, byte[] row) {
-		Table table = find_Table(tableName);			/* Need to define a struct Table and a function find_Table. */
+		Table table = find_Table(tableName);			/* Need to define a class Table and a function find_Table. */
 		int st = 0,  en = 0;
 		for(int i = 0; i <= index.column; i++){ 
 			st = en;
-			//f_pos += table.attributes.get(i).length; //找出记录中第index.column列的长度为该列属性长度的字符串
+			//en += table.attributes.get(i).length; //找出记录中第index.column列的长度为该列属性长度的字符串
 			en += table.attrlist[i].length;
 		}
 		
@@ -33,16 +37,25 @@ public class IndexManager{
 	    	//开始正式建立索引
 		String filename = tableName + ".table";       	
 		try{
-	   		for(int blockOffset = 0; blockOffset < table.blockNum; blockOffset++){
-	   		BufferBlock block = buffer.readBlock(filename, blockOffset);			/*Buffer Manager needs to define a function called readBlock.*/
-	   		for(int offset = 0; offset < block.get_recordNum(); offset++){			/*BufferBlock needs to define a function to get recordNum of a block.*/
-	   				int position = offset * table.get_recordLength();					/*Table class needs to define a get_recoredLength function.*/ 
-	   				byte[] Record = block.getBytes(position, table.recordLength); 		/*Read each record of the block, we need to provide position and each record's Length.*/
-	   				//if(Record.isEmpty()) break;
-	   				byte[] key=getColumnValue(tableName, index, Record); //找出索引值
-	   				thisTree.insert(key, blockOffset, offset); //插入树中
-	   			}
-	   		}
+			RM_FileHandler rmf = RM_Manager.getInstance().openFile(filename);
+			RM_FileScan rmfs = new RM_FileScan(rmf, Constant.TYPE.INT, 4, 0, Constant.COMP_OP.NO_OP, PF_Manager.intTobyteArray(1));
+			RM_Record rmr = rmfs.getNextRec();
+			
+			while (rmr != null) {
+				
+				rmr = rmfs.getNextRec();
+			}
+//	   		for(int blockOffset = 0; blockOffset < table.blockNum; blockOffset++){
+//	   		BufferBlock block = buffer.readBlock(filename, blockOffset);			/*Buffer Manager needs to define a function called readBlock.*/
+//	   		for(int offset = 0; offset < block.get_recordNum(); offset++){			/*BufferBlock needs to define a function to get recordNum of a block.*/
+//	   				int position = offset * table.get_recordLength();					/*Table class needs to define a get_recoredLength function.*/ 
+//	   				byte[] Record = block.getBytes(position, table.recordLength); 		/*Read each record of the block, we need to provide position and each record's Length.*/
+//	   				//if(Record.isEmpty()) break;
+//	   				byte[] key=getColumnValue(tableName, index, Record); //找出索引值
+//	   				thisTree.insert(key, blockOffset, offset); //插入树中
+//	   			}
+//	   		}
+
 	    } catch (NullPointerException e){
 	   		System.err.println("must not be null for key.");
 	    } catch (Exception e){
