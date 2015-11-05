@@ -54,7 +54,7 @@ public class API {
 				if (attr.size() == 0) {
 					RM_FileScan rmfs = new RM_FileScan(rmf, Constant.TYPE.INT, 4, 0, Constant.COMP_OP.NO_OP, PF_Manager.intTobyteArray(1));
 					RM_Record rmr = rmfs.getNextRec();
-					
+					prePrintOut(table_Name);
 					while (rmr != null) {
 						formatPrintOut(rmr, table_Name);
 						rmr = rmfs.getNextRec();
@@ -144,7 +144,17 @@ public class API {
 						break;
 					}
 					if (judge) {
-						if (attr.size() == 1) {						/*	If there is only one condition in where statement.	*/
+						if (attr.size() == 0) {
+							RM_FileScan rmfs = new RM_FileScan(rmf, Constant.TYPE.INT, 4, 0, Constant.COMP_OP.NO_OP, PF_Manager.intTobyteArray(1));
+							RM_Record rmr = rmfs.getNextRec();
+							int count = 0;
+							while (rmr != null) {
+								count ++;
+								rmf.deleteRec(rmr.getRid());
+								rmr = rmfs.getNextRec();
+							}
+							System.out.println("Successfully delete "+count+" lines.");
+						} else if (attr.size() == 1) {						/*	If there is only one condition in where statement.	*/
 							if (cm.TestAttr(table_Name, attr.get(0).getID(), attr.get(0).getValue().getType(), attr.get(0).getValue().getLength())){ /*The last parameter may have some problem.*/
 								Constant.TYPE type = null;
 								int length = 0;
