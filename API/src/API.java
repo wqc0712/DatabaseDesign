@@ -184,14 +184,15 @@ public class API {
 		for (int i = 0; i < table_.getLength(); i++) {
 			attr_ = cm.GetAttrInformation(tableName, i);
 			System.out.print(attr_.getData()); 
-			System.out.print(" ");
+			System.out.print("\t");
 		}
 		System.out.println();
 		for (int i = 0; i < table_.getLength(); i++) {
 			attr_ = cm.GetAttrInformation(tableName, i);
-			for (int j = 0; j < attr_.getLength() + 1; j++)
-				System.out.print("_");
+			for (int j = 0; j < (attr_.getLength() + 1)/2; j++)
+				System.out.print("- ");
 		}
+		System.out.println();
 	}
 	
 	private static void formatPrintOut(RM_Record rmr, String tableName) {	
@@ -221,6 +222,7 @@ public class API {
 			}
 			}
 		}
+		System.out.println();
 	}
 	private static byte[] String2Byte(ArrayList<Value> attr) {
 		byte[] a;
