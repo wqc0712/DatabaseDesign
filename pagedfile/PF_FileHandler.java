@@ -1,3 +1,5 @@
+package pagedfile;
+
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -5,6 +7,8 @@ import java.io.FileOutputStream;
 
 
 import java.io.RandomAccessFile;
+import buffermanager.*;
+import constant.*;
 
 public class PF_FileHandler {
 	PF_FileHandler(Buffer buffer_, String filename_,int fileID_, int counter_, int pageSize_, int freeFirst_){
@@ -100,6 +104,10 @@ public class PF_FileHandler {
 	
 	public int getCounter() {
 		return counter;
+	}
+	
+	public int getPageNum() {
+		return pageNum;
 	}
 	
 	public void setCounter(int counter) {

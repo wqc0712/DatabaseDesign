@@ -15,7 +15,7 @@ public class IndexManager{
 		buf = buffer;
 	}
 		
-	private static byte[] getColumnValue(String tableName, Index index, byte[] row) {			/*This function may has some bugs.*/
+	private static byte[] getColumnValue(String tableName, Index index, byte[] row) {
 		int st = 0,  en = 0;
 		for(int i = 0; i <= table_.getLength(); i++){
 			attr_ = cm.GetAttrInformation(tableName, i);
@@ -30,10 +30,10 @@ public class IndexManager{
 		return colValue;
 	}
 	
-	public static void createIndex(String tableName, Index index){
+	public static void createIndex(String tableName, String indexName){
 		Value table_ = cm.GetTableInformation(tableName);
 		Value attr_;
-		BPlusTree thisTree = new BPlusTree(index);
+		BPlusTree thisTree = new BPlusTree(indexName);
 		
 		String filename = tableName + ".table";       	
 		try{
@@ -43,7 +43,7 @@ public class IndexManager{
 			
 			while (rmr != null) {
 				byte[] Record = rmr.getData();
-				byte[] key = getColumnValue(tableName, index, Record);
+				byte[] key = getColumnValue(tableName, indexName, Record);
 				thisTree.insert(key, rmr.getRid().getPageNum(), rmr.getRid().getSlotNum());
 				rmr = rmfs.getNextRec();
 			}
@@ -54,7 +54,7 @@ public class IndexManager{
 	    }
 	   
 	   //index.rootNum=thisTree.myRootBlock.blockOffset;
-  	    setIndexRoot(index.Name, thisTree.myRootBlock.blockOffset); 									/*Need to define a function called setIndexRoot.*/
+  	    setIndexRoot(indexName, thisTree.myRootBlock.getPageNum()); 									/*Need to define a function called setIndexRoot.*/
 		System.out.println("Create index successfully!");
 	}
 	
@@ -76,11 +76,11 @@ public class IndexManager{
 		System.out.println("Delete index successfully！");
 	}
 	
-	public static RID searchEqual(Index index, byte[] key) throws Exception{
+	public static RID searchEqual(String indexName, byte[] key) throws Exception{
 		RID off = new RID();
 		try{
 			//Index inx=CatalogManager.getIndex(index.indexName);
-			BPlusTree thisTree = new BPlusTree(index, buf, index. rootNum);
+			BPlusTree thisTree = new BPlusTree(indexName, buf, indexName.rootNum);		/*This place has bugs.*/
 			off = thisTree.searchKey(key);
 			return off;
 		} catch(NullPointerException e) {
@@ -89,25 +89,25 @@ public class IndexManager{
 		}
 	}
 	
-	static public void insertKey(Index index,byte[] key, int blockOffset, int offset) throws Exception {
+	static public void insertKey(String indexName, byte[] key, int blockOffset, int offset) throws Exception {
 		try {
 			//Index inx=CatalogManager.getIndex(index.indexName);
-			BPlusTree thisTree=new BPlusTree(index, buf, index. rootNum);
+			BPlusTree thisTree = new BPlusTree(indexName, buf, indexName.rootNum);		/*This place has bugs.*/
 			thisTree.insert(key, blockOffset, offset);
 			//index.rootNum=thisTree.myRootBlock.blockOffset;
-			setIndexRoot(index.indexName, thisTree.myRootBlock.blockOffset);
+			setIndexRoot(indexName, thisTree.myRootBlock.getPageNum());
 		} catch (NullPointerException e) {
 			System.err.println();
 		}	
 	}
 	
-	static public void deleteKey(Index index, byte[] deleteKey) throws Exception{
+	static public void deleteKey(String indexName, byte[] deleteKey) throws Exception{
 		try{
 			//Index inx=CatalogManager.getIndex(index.indexName);
-			BPlusTree thisTree = new BPlusTree(index, buf, index. rootNum);
+			BPlusTree thisTree = new BPlusTree(indexName, buf, indexName.rootNum);		/*This place has bugs.*/
 			thisTree.delete(deleteKey);
 			//index.rootNum=thisTree.myRootBlock.blockOffset;
-			setIndexRoot(index.indexName, thisTree.myRootBlock.blockOffset);
+			setIndexRoot(indexName, thisTree.myRootBlock.getPageNum());
 		} catch (NullPointerException e) {
 			System.err.println();
 		}	
