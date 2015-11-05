@@ -1,6 +1,13 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import constant.Constant;
+import pagedfile.PF_Manager;
+import recordmanager.RM_FileHandler;
+import recordmanager.RM_FileScan;
+import recordmanager.RM_Manager;
+import recordmanager.RM_Record;
+
 public class API {
 	static API manager = new API();
 	private static RM_Manager rm = RM_Manager.getInstance();
@@ -44,7 +51,15 @@ public class API {
 		if (cm.isTableExist(table_Name)) {
 			try {
 				RM_FileHandler rmf = rm.openFile(table_Name);
-				if (attr.size() == 1) {							/*	If there is only one condition in where statement.	*/
+				if (attr.size() == 0) {
+					RM_FileScan rmfs = new RM_FileScan(rmf, Constant.TYPE.INT, 4, 0, Constant.COMP_OP.NO_OP, PF_Manager.intTobyteArray(1));
+					RM_Record rmr = rmfs.getNextRec();
+					
+					while (rmr != null) {
+						formatPrintOut(rmr, table_Name);
+						rmr = rmfs.getNextRec();
+					}					
+				} else if (attr.size() == 1) {							/*	If there is only one condition in where statement.	*/
 					if (cm.TestAttr(table_Name, attr.get(0).getID(), attr.get(0).getValue().getType(), attr.get(0).getValue().getLength())){ /*The last parameter may have some problem.*/
 						Constant.TYPE type = null;
 						int length = 0;
@@ -69,7 +84,6 @@ public class API {
 						temp.add(attr.get(0).getValue());
 						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 						RM_Record rmr = rmfs.getNextRec();
-						System.out.println("LINE49");
 						prePrintOut(table_Name);
 						while (rmr != null) {
 							formatPrintOut(rmr, table_Name);
