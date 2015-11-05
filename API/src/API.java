@@ -105,6 +105,7 @@ public class API {
 					RM_FileHandler rmf = rm.openFile(table_Name);
 					rmf.insertRec(String2Byte(attr));
 					rm.closeFile(rmf);
+					System.out.println("Successfully insert into table "+table_Name+".");
 				} catch (Exception e) {
 					throw e;
 				} finally {
@@ -208,15 +209,10 @@ public class API {
 				break;
 			}
 			case 1:{
-				System.out.print("\"");
+				System.out.print("\'");
 				String temp_ = new String(temp);
 				System.out.print(temp_);
-/*				for (int j = 0; j < 256; j++)
-				if (temp[j] != 0) {
-					System.out.print(temp[j].toString);
-				} else 
-					break;*/
-				System.out.print("\"\t");
+				System.out.print("\'" + "\t");
 				break;
 			}
 			case 2:{
