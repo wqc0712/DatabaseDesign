@@ -601,9 +601,9 @@ public class BPlusTree{
 				myIndexInfo.blockNum++;
 				LeafNode newNode = new LeafNode(newBlock);
 				
-				for(int i = 0;i < MIN_FOR_LEAF - 1; i++){ //插入原块
+				for (int i = 0; i < MIN_FOR_LEAF - 1; i++){ //插入原块
 					int pos = 17 + i * (myIndexInfo.columnLength + 8);
-					if(compareTo(insertKey, block.getBytes(pos, myIndexInfo.columnLength)) < 0){					
+					if (compareTo(insertKey, block.getBytes(pos, myIndexInfo.columnLength)) < 0){					
 						System.arraycopy(block.getData(),  //把第MIN_FOR_LEAF-1条开始的记录copy到新block
 								9 + (MIN_FOR_LEAF - 1) * (myIndexInfo.columnLength + 8), 
 								newBlock.getData(), 
@@ -678,21 +678,19 @@ public class BPlusTree{
 				else{
 					parentBlockNum=block.getInt(5,POINTERLENGTH);				
 					newBlock.setInt(5, POINTERLENGTH, parentBlockNum); //新节点的父亲也就是旧节点的父亲
-					ParentBlock=BufferManager.readBlock(filename, parentBlockNum);
+					ParentBlock = pffh.getBlock(parentBlockNum);
 					ParentNode=new InternalNode(ParentBlock,true);
 				}
 			
 				//将branchKey(新块的第一个索引键值)提交，让父块分裂出它们两个块
 				byte[] branchKey=newBlock.getBytes(17, myIndexInfo.columnLength);
-				
 				return  ParentNode.branchInsert(branchKey, this, newNode);
-			}
-			
+			}			
 			else{  //不需要分裂节点时
 				if(keyNum-1==0){
-					System.arraycopy(block.values,
+					System.arraycopy(block.getData(),
 							9, 
-							block.values, 
+							block.getData(), 
 							9+(myIndexInfo.columnLength+8), 
 							POINTERLENGTH);
 			
@@ -711,9 +709,9 @@ public class BPlusTree{
 					}
 					
 					if(compareTo(insertKey,block.getBytes(pos,myIndexInfo.columnLength)) < 0){ //找到插入的位置
-						System.arraycopy(block.values,
+						System.arraycopy(block.getData(),
 										9+i*(myIndexInfo.columnLength+8), 
-										block.values, 
+										block.getData(), 
 										9+(i+1)*(myIndexInfo.columnLength+8), 
 										POINTERLENGTH+(keyNum-1-i)*(myIndexInfo.columnLength+8));
 						
@@ -724,9 +722,9 @@ public class BPlusTree{
 					}					
 				}
 				if(i==keyNum){
-					System.arraycopy(block.values,
+					System.arraycopy(block.getData(),
 							9+(i-1)*(myIndexInfo.columnLength+8), 
-							block.values, 
+							block.getData(), 
 							9+i*(myIndexInfo.columnLength+8), 
 							POINTERLENGTH);
 			
@@ -781,10 +779,10 @@ public class BPlusTree{
 			byte[] middleKey = block.getBytes(8+pos, myIndexInfo.columnLength); 
 			
 			//将找到的位置上的表文件偏移信息存入off中，返回给上级调用
-            offsetInfo off=new offsetInfo();
+            RID off = new RID();
           
-            off.offsetInfile=block.getInt(pos, 4);
-            off.offsetInBlock=block.getInt(pos+4, 4);
+            off.setPageNum(block.getInt(pos, 4));
+            off.setSlotNum(block.getInt(pos + 4, 4));
 					
             return compareTo(middleKey,key) == 0 ? off : null;   //再次确认有没有找到这个索引键值，没有则返回null
 		}
@@ -795,7 +793,7 @@ public class BPlusTree{
 			int afterkeyNum= afterBlock.getInt(1, 4);
 			
 			//将after块的内容复制到this块的后面
-			System.arraycopy(afterBlock.values,9,block.values,9+keyNum*(myIndexInfo.columnLength+8),POINTERLENGTH+afterkeyNum*(myIndexInfo.columnLength+8));
+			System.arraycopy(afterBlock.getData(),9,block.getData(),9+keyNum*(myIndexInfo.columnLength+8),POINTERLENGTH+afterkeyNum*(myIndexInfo.columnLength+8));
 			
 			//更新索引数量
 			keyNum+=afterkeyNum;		
@@ -807,7 +805,7 @@ public class BPlusTree{
 			
 			//在父节点中删除这个被废弃的after块的信息(标号及它前面的路标)
 			int parentBlockNum=block.getInt(5, POINTERLENGTH);
-			BufferBlock parentBlock=BufferManager.readBlock(filename, parentBlockNum); 
+			BufferBlock parentBlock = pffh.getBlock(parentBlockNum); 
 			
 			return (new InternalNode(parentBlock,true)).delete(afterBlock);
 			
@@ -826,7 +824,7 @@ public class BPlusTree{
 			//更新兄弟块的内容
 			siblingKeyNum--;
 			siblingBlock.setInt(1, 4, siblingKeyNum);
-			System.arraycopy(siblingBlock.values, 9+8+myIndexInfo.columnLength, siblingBlock.values, 9, POINTERLENGTH+siblingKeyNum*(8+myIndexInfo.columnLength));
+			System.arraycopy(siblingBlock.getData(), 9+8+myIndexInfo.columnLength, siblingBlock.getData(), 9, POINTERLENGTH+siblingKeyNum*(8+myIndexInfo.columnLength));
 			
 			//this块和兄弟块之间的新路标
 			byte[] changeKey=siblingBlock.getBytes(17, myIndexInfo.columnLength);
@@ -836,7 +834,7 @@ public class BPlusTree{
 			keyNum++;
 			block.setInt(1, 4, keyNum);
 			//注意不要漏了链表信息(下一块的标号)
-			block.setInt(9+keyNum*(myIndexInfo.columnLength+8), POINTERLENGTH, siblingBlock.blockOffset);
+			block.setInt(9+keyNum*(myIndexInfo.columnLength+8), POINTERLENGTH, siblingBlock.getPageNum());
 			
 			return changeKey;
 			
@@ -855,10 +853,10 @@ public class BPlusTree{
 			byte[] Key=siblingBlock.getBytes(17+siblingKeyNum*(myIndexInfo.columnLength+8), myIndexInfo.columnLength);
 			
 			//保存好链表信息
-			siblingBlock.setInt(9+siblingKeyNum*(myIndexInfo.columnLength+8), POINTERLENGTH, block.blockOffset);
+			siblingBlock.setInt(9+siblingKeyNum*(myIndexInfo.columnLength+8), POINTERLENGTH, block.getPageNum());
 			
 			//挪出新索引位置
-			System.arraycopy(block.values, 9, block.values, 9+8+myIndexInfo.columnLength, POINTERLENGTH+keyNum*(8+myIndexInfo.columnLength));
+			System.arraycopy(block.getData(), 9, block.getData(), 9+8+myIndexInfo.columnLength, POINTERLENGTH+keyNum*(8+myIndexInfo.columnLength));
 			block.setKeyValues(9, Key, blockOffset, offset); //插入新索引
 			keyNum++;
 			block.setInt(1, 4, keyNum);
@@ -882,11 +880,11 @@ public class BPlusTree{
 					return null;
 				}
 				
-				if(compareTo(deleteKey,block.getBytes(pos,myIndexInfo.columnLength)) == 0){ //找到对应的键值					
+				if(compareTo(deleteKey,block.getBytes(pos, myIndexInfo.columnLength)) == 0){ //找到对应的键值					
 					
-					System.arraycopy(block.values, //移除这条索引
+					System.arraycopy(block.getData(), //移除这条索引
 									9+(i+1)*(myIndexInfo.columnLength+8), 
-									block.values, 
+									block.getData(), 
 									9+i*(myIndexInfo.columnLength+8), 
 									POINTERLENGTH+(keyNum-1-i)*(myIndexInfo.columnLength+8));
 					keyNum--;
@@ -894,25 +892,25 @@ public class BPlusTree{
 					
 					if(keyNum >=MIN_FOR_LEAF) return null; //仍然满足数量要求
 					
-					if(block.values[5]=='$') return null;  //没有父块，本身为根
+					if(block.getData()[5]=='$') return null;  //没有父块，本身为根
 					
 					boolean lastFlag=false;
-					if(block.values[9+keyNum*(myIndexInfo.columnLength+8)]=='&') lastFlag=true; //叶子块链表的最后一块
+					if(block.getData()[9+keyNum*(myIndexInfo.columnLength+8)]=='&') lastFlag=true; //叶子块链表的最后一块
 					
-					int sibling=block.getInt(9+keyNum*(myIndexInfo.columnLength+8), POINTERLENGTH); 
-					BufferBlock siblingBlock=BufferManager.readBlock(filename, sibling);
+					int sibling=block.getInt(9+keyNum*(myIndexInfo.columnLength+8), POINTERLENGTH);
+					BufferBlock siblingBlock = pffh.getBlock(sibling);
 					int parentBlockNum=block.getInt(5, POINTERLENGTH);
 					
 					if(lastFlag || siblingBlock==null || siblingBlock.getInt(5, POINTERLENGTH)!=parentBlockNum/*虽然有后续块但不是同一个父亲的兄弟块*/){  //没有找到后续兄弟节点
 						//通过父块找前续兄弟块
-						BufferBlock parentBlock=BufferManager.readBlock(filename, parentBlockNum);
+						BufferBlock parentBlock = pffh.getBlock(parentBlockNum);
 						int j=0;
 						int parentKeyNum=parentBlock.getInt(1, 4);
 						for(;j<parentKeyNum;j++){
 							int ppos=9+POINTERLENGTH+j*(myIndexInfo.columnLength+POINTERLENGTH);
 							if(compareTo(deleteKey,parentBlock.getBytes(ppos, myIndexInfo.columnLength))<0){
 								sibling=parentBlock.getInt(ppos-2*POINTERLENGTH-myIndexInfo.columnLength, POINTERLENGTH);
-								siblingBlock=BufferManager.readBlock(filename, sibling);
+								siblingBlock = pffh.getBlock(sibling);
 								break;
 							}
 						}
@@ -939,8 +937,8 @@ public class BPlusTree{
 					if(siblingBlock.getInt(1, 4)==MIN_FOR_LEAF) return null;
 					
 					//重排
-					BufferBlock parentBlock=BufferManager.readBlock(filename, parentBlockNum);
-					(new InternalNode(parentBlock,true)).exchange(rearrangeAfter(siblingBlock),block.blockOffset);//blockOffset请bufferManager务必设计好
+					BufferBlock parentBlock = pffh.getBlock(parentBlockNum);
+					(new InternalNode(parentBlock,true)).exchange(rearrangeAfter(siblingBlock),block.getPageNum());//blockOffset请bufferManager务必设计好
 					return null;
 				}
 			}
