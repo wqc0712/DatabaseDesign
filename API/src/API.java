@@ -204,7 +204,7 @@ public class API {
 			System.arraycopy(rmr.getData(), i * 256, temp, 0, 256);
 			switch (attr_.getType()) {
 			case 0:{
-				System.out.print(PF_Manager.byteArrayToint(temp) + " ");
+				System.out.print(PF_Manager.byteArrayToint(temp) + "\t");
 				break;
 			}
 			case 1:{
@@ -213,11 +213,11 @@ public class API {
 					System.out.print(temp[j]);
 				} else 
 					break;
-				System.out.print(" ");
+				System.out.print("\t");
 				break;
 			}
 			case 2:{
-				System.out.print(PF_Manager.byteArrayToDouble(temp) + " ");
+				System.out.print(PF_Manager.byteArrayToDouble(temp) + "\t");
 				break;
 			}
 			}
