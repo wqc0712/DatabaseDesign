@@ -69,10 +69,10 @@ public class API {
 						temp.add(attr.get(0).getValue());
 						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
 						RM_Record rmr = rmfs.getNextRec();
-
-						prePrintOut(tableName);
+						System.out.println("LINE49");
+						prePrintOut(table_Name);
 						while (rmr != null) {
-							formatPrintOut(rmr, tableName);
+							formatPrintOut(rmr, table_Name);
 //							System.out.println(rmr.getData());			/*this place has bugs. must have format.*/
 							rmr = rmfs.getNextRec();
 						}
