@@ -385,6 +385,15 @@ public class CatalogManager {
         return false;
     }
 
+    public String getPK(String TableName) {
+        for (int i = 0; i < IndexNum;i++) {
+            if (I.get(i).getIndexName().equals("_"+TableName)) {
+                return I.get(i).getKeyName();
+            }
+        }
+        return null;
+    }
+
     public boolean isIndexOnkey(String TableName, String KeyName) {
         int ID = GetTableInformation(TableName).getType();
         for (int i = 0;i < IndexNum;i++) {
@@ -478,6 +487,7 @@ class Table {
     private String name;
     private int ID;
     private int length;
+
 
     public Table(int a,String b,int c) {
         ID = a;
