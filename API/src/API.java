@@ -208,12 +208,15 @@ public class API {
 				break;
 			}
 			case 1:{
-				for (int j = 0; j < 256; j++)
+				System.out.print("\"");
+				String temp_ = new String(temp);
+				System.out.print(temp_);
+/*				for (int j = 0; j < 256; j++)
 				if (temp[j] != 0) {
-					System.out.print(temp[j]);
+					System.out.print(temp[j].toString);
 				} else 
-					break;
-				System.out.print("\t");
+					break;*/
+				System.out.print("\"\t");
 				break;
 			}
 			case 2:{
