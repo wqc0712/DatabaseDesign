@@ -22,6 +22,17 @@ public class API {
 				cm.addTable(table_Name, attr.size(), attr, primary_Key);
 				rm.createFile(table_Name, attr.size() * 256);
 				System.out.println("Successfully create table "+table_Name+".");
+
+				Value attr_ = cm.GetAttrInformation(table_Name, cm.findOffset(table_Name, primary_Key));
+				Index new_Index = new Index();
+				new_Index.indexName = "_" + primary_Key;
+				new_Index.tableName = table_Name;
+				new_Index.column = cm.GetTableInformation(table_Name).getLength();
+				new_Index.columnLength = attr_.getLength();
+				new_Index.rootNum = 0;
+				new_Index.blockNum = 0;
+				im.createIndex(table_Name, new_Index);
+				System.out.println("Successfully create index "+index_Name+".");
 			} catch  (Exception e) {
 				System.out.println(e);
 //				throw e;
@@ -29,30 +40,6 @@ public class API {
 		} else
 			System.out.println("Error: the table name has been already used.");
 //			throw new Exception("Error: the table name has been already used.");
-	}
-
-	public void drop_table(String table_Name) throws Exception{
-		if (cm.isTableExist(table_Name)) {
-			try {
-				rm.destoryFile(table_Name);
-				CatalogManager.getInstance().dropTable(table_Name);
-				System.out.println("Drop table "+table_Name+" successfully.");
-			} catch  (Exception e) {
-				System.out.println(e);
-			}
-		} else
-			System.out.println("Error: do not have this table.");
-//			throw new Exception("Error: do not have this table.");
-	}
-	ArrayList<RM_Record> intersect(ArrayList<RM_Record> set1,ArrayList<RM_Record> set2) {
-		ArrayList<RM_Record> result = new ArrayList();
-		for (int i = 0; i < set1.size(); i++) 
-			for (int j = 0; j < set2.size(); j++) {
-				if (set1.get(i).getRid().equal(set2.get(j).getRid()))
-					result.add(set1.get(i));
-					
-			}
-		return result;
 	}
 
 	public void create_index(String index_Name, String table_Name, String attr_Name) throws Exception {
@@ -81,6 +68,30 @@ public class API {
 				System.out.println("Error: attribute " + attr_Name + " does not exist in table "+table_Name+".");
 		} else
 			System.out.println("Error: do not have this table");
+	}
+
+	public void drop_table(String table_Name) throws Exception{
+		if (cm.isTableExist(table_Name)) {
+			try {
+				rm.destoryFile(table_Name);
+				CatalogManager.getInstance().dropTable(table_Name);
+				System.out.println("Drop table "+table_Name+" successfully.");
+			} catch  (Exception e) {
+				System.out.println(e);
+			}
+		} else
+			System.out.println("Error: do not have this table.");
+//			throw new Exception("Error: do not have this table.");
+	}
+	ArrayList<RM_Record> intersect(ArrayList<RM_Record> set1,ArrayList<RM_Record> set2) {
+		ArrayList<RM_Record> result = new ArrayList();
+		for (int i = 0; i < set1.size(); i++) 
+			for (int j = 0; j < set2.size(); j++) {
+				if (set1.get(i).getRid().equal(set2.get(j).getRid()))
+					result.add(set1.get(i));
+					
+			}
+		return result;
 	}
 	
 	public void drop_index(String index_Name) throws Exception {
