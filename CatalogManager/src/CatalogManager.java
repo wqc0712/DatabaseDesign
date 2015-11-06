@@ -486,6 +486,37 @@ public class CatalogManager {
         return ST;
     }
 
+    private class Index{
+        private String IndexName;
+        private String KeyName;
+        private int ID;
+        private int TableID;
+
+        public Index(int a,String b,int c,String d) {
+            IndexName = b;
+            KeyName = d;
+            ID = a;
+            TableID = c;
+        }
+
+        public int getID() {
+            return ID;
+        }
+
+        public int getTableID() {
+            return TableID;
+        }
+
+        public String getIndexName() {
+            return IndexName;
+        }
+
+        public String getKeyName() {
+            return KeyName;
+        }
+
+    }
+
 }
 
 class Table {
@@ -540,33 +571,3 @@ class Table {
     }
 }
 
-class Index{
-    private String IndexName;
-    private String KeyName;
-    private int ID;
-    private int TableID;
-
-    public Index(int a,String b,int c,String d) {
-        IndexName = b;
-        KeyName = d;
-        ID = a;
-        TableID = c;
-    }
-
-    public int getID() {
-        return ID;
-    }
-
-    public int getTableID() {
-        return TableID;
-    }
-
-    public String getIndexName() {
-        return IndexName;
-    }
-
-    public String getKeyName() {
-        return KeyName;
-    }
-
-}

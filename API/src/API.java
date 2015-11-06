@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.sun.org.apache.xerces.internal.impl.dtd.models.CMAny;
 
 
 
@@ -32,7 +31,7 @@ public class API {
 				new_Index.rootNum = 0;
 				new_Index.blockNum = 0;
 				im.createIndex(table_Name, new_Index);
-				System.out.println("Successfully create index "+index_Name+".");
+				//System.out.println("Successfully create index "+index_Name+".");
 			} catch  (Exception e) {
 				System.out.println(e);
 //				throw e;

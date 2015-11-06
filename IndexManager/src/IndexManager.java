@@ -1,15 +1,14 @@
 import java.io.File;
 import java.util.*;
 
-import com.sun.org.apache.bcel.internal.generic.Type;
 
-import constant.*;
+/*import constant.*;
 import buffermanager.*;
 import recordmanager.*;
 import pagedfile.*;
 import CatalogManager.*;
 import CatalogManager.src.CatalogManager;
-import Interpreter.Value;
+import Interpreter.Value;*/
 
 public class IndexManager{
 	private static CatalogManager cm = CatalogManager.getInstance();
