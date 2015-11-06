@@ -8,7 +8,11 @@ public class RID {
 		pageNum = pageNum_;
 		slotNum = slotNum_;
 	}
-	 
+	public boolean equal(RID rid) {
+		if (pageNum == rid.pageNum && slotNum == rid.slotNum) 
+			return true;
+		return false;
+	}
 	public int getPageNum() {
 		return pageNum;
 	}

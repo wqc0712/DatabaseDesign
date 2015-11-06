@@ -46,7 +46,15 @@ public class API {
 			System.out.println("Error: do not have this table.");
 //			throw new Exception("Error: do not have this table.");
 	}
-	
+	ArrayList<RM_Record> intersect(ArrayList<RM_Record> set1,ArrayList<RM_Record> set2) {
+		ArrayList<RM_Reocrd> result = new ArrayList();
+		for (int i = 0; i < set1.size(); i++) 
+			for (int j = 0; j < set2.size(); j++) {
+				if (set1[i].getRid().equal(set2[j].getRid()))
+					result.add(set1[i]);
+					
+			}
+	}
 	public void select_from (String table_Name, ArrayList<CondExpr> attr) throws Exception{
 		if (cm.isTableExist(table_Name)) {
 			try {
@@ -94,8 +102,52 @@ public class API {
 						System.out.println("Error: the where condition is wrong!");
 //						throw new Exception("Error: the where condition is wrong!");
 				} else {								/*	If there is more than one condition in where statement.	*/
-					/*	Use Index...	*/
-					
+					ArrayList<RM_Record> setCollection;
+					ArrayList<RM_Record> result = new ArrayList();
+					for (int i = 0; i < attr.size(); i++) {
+					if (cm.TestAttr(table_Name, attr.get(i).getID(), attr.get(i).getValue().getType(), attr.get(i).getValue().getLength())){ /*The last parameter may have some problem.*/
+						Constant.TYPE type = null;
+						int length = 0;
+						switch (attr.get(i).getValue().getType()) {
+						case 0: type = Constant.TYPE.INT; length = 4;break;
+						case 1: type = Constant.TYPE.STRING; length = attr.get(i).getValue().getLength();break;	/*This may have some problem about attrbute's length. */
+						case 2: type = Constant.TYPE.DOUBLE; length = 8;break;
+						}
+						
+						int offset = cm.findOffset(table_Name, attr.get(i).getID())*256;
+						
+						Constant.COMP_OP op = null;
+						switch (attr.get(i).getOP()) {
+						case "=": op = Constant.COMP_OP.EQ_OP; break;
+						case ">": op = Constant.COMP_OP.GT_OP; break;
+						case "<": op = Constant.COMP_OP.LT_OP; break;
+						case "<>": op = Constant.COMP_OP.NE_OP; break;
+						case ">=": op = Constant.COMP_OP.GT_OP; break;
+						case "<=": op = Constant.COMP_OP.LE_OP; break;
+						}
+						ArrayList<Value> temp = new ArrayList<>();
+						temp.add(attr.get(i).getValue());
+						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
+						RM_Record rmr = rmfs.getNextRec();
+						setCollection = new ArrayList<RM_Record>();
+						while (rmr != null) {
+							setCollection.add(rmr);							
+//							System.out.println(rmr.getData());			/*this place has bugs. must have format.*/
+							rmr = rmfs.getNextRec();
+						}
+						if (i == 0) {
+							result = setCollection;
+						} else {
+							result = intersect(result,setCollection);
+						}
+					} else
+						System.out.println("Error: the where condition is wrong!");
+//						throw new Exception("Error: the where condition is wrong!");
+					}
+					prePrintOut(table_Name);
+					for (int i = 0; i < result.size(); i++) {
+						formatPrintOut(result[i], table_Name);
+					}
 				}
 				
 			} catch (Exception e) {
@@ -190,8 +242,52 @@ public class API {
 								System.out.println("Error: where condition is wrong!");
 //								throw new Exception("Error: the where condition is wrong!");
 						} else {							/*	If there is more than one condition in where statement.	*/
-							/*	Use Index...	*/
-							
+							ArrayList<RM_Record> setCollection;
+							ArrayList<RM_Record> result = new ArrayList();
+							for (int i = 0; i < attr.size(); i++) {
+							if (cm.TestAttr(table_Name, attr.get(i).getID(), attr.get(i).getValue().getType(), attr.get(i).getValue().getLength())){ /*The last parameter may have some problem.*/
+								Constant.TYPE type = null;
+								int length = 0;
+								switch (attr.get(i).getValue().getType()) {
+								case 0: type = Constant.TYPE.INT; length = 4;break;
+								case 1: type = Constant.TYPE.STRING; length = attr.get(i).getValue().getLength();break;	/*This may have some problem about attrbute's length. */
+								case 2: type = Constant.TYPE.DOUBLE; length = 8;break;
+								}
+								
+								int offset = cm.findOffset(table_Name, attr.get(i).getID())*256;
+								
+								Constant.COMP_OP op = null;
+								switch (attr.get(i).getOP()) {
+								case "=": op = Constant.COMP_OP.EQ_OP; break;
+								case ">": op = Constant.COMP_OP.GT_OP; break;
+								case "<": op = Constant.COMP_OP.LT_OP; break;
+								case "<>": op = Constant.COMP_OP.NE_OP; break;
+								case ">=": op = Constant.COMP_OP.GT_OP; break;
+								case "<=": op = Constant.COMP_OP.LE_OP; break;
+								}
+								ArrayList<Value> temp = new ArrayList<>();
+								temp.add(attr.get(i).getValue());
+								RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp));
+								RM_Record rmr = rmfs.getNextRec();
+								setCollection = new ArrayList<RM_Record>();
+								while (rmr != null) {
+									setCollection.add(rmr);							
+//									System.out.println(rmr.getData());			/*this place has bugs. must have format.*/
+									rmr = rmfs.getNextRec();
+								}
+								if (i == 0) {
+									result = setCollection;
+								} else {
+									result = intersect(result,setCollection);
+								}
+							} else
+								System.out.println("Error: the where condition is wrong!");
+//								throw new Exception("Error: the where condition is wrong!");
+							}
+							for (int i = 0; i < result.size(); i++) {
+								result[i].deleteRec(result[i].getRid());
+							}
+							System.out.println("Successfully delete "+result.size()+" lines.");
 						}
 					} else
 						System.out.println("Error: attributes are not corresponding to the table.");
