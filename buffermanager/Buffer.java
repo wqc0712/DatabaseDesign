@@ -1,11 +1,11 @@
-package buffermanager;
+/*package buffermanager;*/
 
 import java.util.LinkedList;
 import java.util.Hashtable;
-
+/*
 import constant.*;
 import pagedfile.*;
-
+*/
 
 public class Buffer {
 	class LRUNode {

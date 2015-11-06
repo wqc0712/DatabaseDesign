@@ -1,6 +1,6 @@
-package buffermanager;
+/*package buffermanager;
 
-import pagedfile.*;
+/*import pagedfile.*;*/
 
 public class BufferBlock {
 	public BufferBlock(int fileId_,int pageNum_,PF_PageHandler page_,int head ,byte[] data_, boolean dirty_) {

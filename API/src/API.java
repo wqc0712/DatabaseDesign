@@ -1,12 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import constant.Constant;
-import pagedfile.PF_Manager;
-import recordmanager.RM_FileHandler;
-import recordmanager.RM_FileScan;
-import recordmanager.RM_Manager;
-import recordmanager.RM_Record;
+
 
 public class API {
 	static API manager = new API();
@@ -47,13 +42,14 @@ public class API {
 //			throw new Exception("Error: do not have this table.");
 	}
 	ArrayList<RM_Record> intersect(ArrayList<RM_Record> set1,ArrayList<RM_Record> set2) {
-		ArrayList<RM_Reocrd> result = new ArrayList();
+		ArrayList<RM_Record> result = new ArrayList();
 		for (int i = 0; i < set1.size(); i++) 
 			for (int j = 0; j < set2.size(); j++) {
-				if (set1[i].getRid().equal(set2[j].getRid()))
-					result.add(set1[i]);
+				if (set1.get(i).getRid().equal(set2.get(j).getRid()))
+					result.add(set1.get(i));
 					
 			}
+		return result;
 	}
 	public void select_from (String table_Name, ArrayList<CondExpr> attr) throws Exception{
 		if (cm.isTableExist(table_Name)) {
@@ -146,7 +142,7 @@ public class API {
 					}
 					prePrintOut(table_Name);
 					for (int i = 0; i < result.size(); i++) {
-						formatPrintOut(result[i], table_Name);
+						formatPrintOut(result.get(i), table_Name);
 					}
 				}
 				
@@ -285,7 +281,8 @@ public class API {
 //								throw new Exception("Error: the where condition is wrong!");
 							}
 							for (int i = 0; i < result.size(); i++) {
-								result[i].deleteRec(result[i].getRid());
+								// TODO
+								rmf.deleteRec(result.get(i).getRid());
 							}
 							System.out.println("Successfully delete "+result.size()+" lines.");
 						}
