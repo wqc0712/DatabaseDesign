@@ -15,11 +15,12 @@ public class IndexManager{
 	private static CatalogManager cm = CatalogManager.getInstance();
 	private static TreeMap<String, Integer> mapIndexRoot = new TreeMap<String, Integer>();	 
 	public static Buffer buf;
-		
+	
 	IndexManager(Buffer buffer){
 		buf = buffer;
 	}
-		
+	private static IndexManager Instant = new IndexManager();
+    public static IndexManager getInstance() { return Instant;}
 	private static byte[] getColumnValue(String tableName, Index index, byte[] row) {
 /*		Value table_ = cm.GetTableInformation(tableName);
 		Value attr_;

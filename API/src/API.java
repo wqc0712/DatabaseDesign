@@ -1,11 +1,14 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.sun.org.apache.xerces.internal.impl.dtd.models.CMAny;
+
 
 
 public class API {
 	static API manager = new API();
 	private static RM_Manager rm = RM_Manager.getInstance();
+	private static IndexManager im = IndexManager.getInstance();
 	private static CatalogManager cm = CatalogManager.getInstance();
 	
 	private static byte[] _att;
@@ -51,6 +54,44 @@ public class API {
 			}
 		return result;
 	}
+
+	public void create_index(String index_Name, String table_Name, String attr_Name) throws Exception {
+		if (cm.isTableExist(table_Name)) {
+			if (cm.findOffset(table_Name, attr_Name) != -1) {
+				if (!cm.isIndexExist(index_Name)) {
+					try {
+						cm.addIndex(index_Name, table_Name, attr_Name);						
+						Value attr_ = cm.GetAttrInformation(table_Name, cm.findOffset(table_Name, attr_Name));
+						Index new_Index = new Index();
+						new_Index.indexName = index_Name;
+						new_Index.tableName = table_Name;
+						new_Index.column = cm.GetTableInformation(table_Name).getLength();
+						new_Index.columnLength = attr_.getLength();
+						new_Index.rootNum = 0;
+						new_Index.blockNum = 0;
+						im.createIndex(table_Name, new_Index);
+//						rm.createFile(table_Name, attr.size() * 256);
+						System.out.println("Successfully create index "+index_Name+".");
+					} catch  (Exception e) {
+						System.out.println(e);
+					}					
+				} else
+					System.out.println("Error: Index " + index_Name + " already existed.");
+			} else
+				System.out.println("Error: attribute " + attr_Name + " does not exist in table "+table_Name+".");
+		} else
+			System.out.println("Error: do not have this table");
+	}
+	
+	public void drop_index(String index_Name) throws Exception {
+		if (cm.isIndexExist(index_Name)) {
+			cm.dropIndex(index_Name);
+			im.dropIndex(index_Name);
+//			BufferManager.dropTable(index_Name+".index");
+		} else 
+			System.out.println("Error: do not have this index");
+	}
+	
 	public void select_from (String table_Name, ArrayList<CondExpr> attr) throws Exception{
 		if (cm.isTableExist(table_Name)) {
 			try {
