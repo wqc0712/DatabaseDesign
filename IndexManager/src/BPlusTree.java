@@ -1,7 +1,7 @@
 import java.io.*;
-import pagedfile.*;
+/*import pagedfile.*;
 import buffermanager.*;
-import recordmanager.*;
+import recordmanager.*;*/
 
 public class BPlusTree{
 	private static PF_FileHandler pffh;
