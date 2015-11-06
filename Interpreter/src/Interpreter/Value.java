@@ -1,6 +1,8 @@
 /**
  * Created by tom on 15/10/26.
  */
+package Interpreter;
+
 public class Value {
     private String Data;						/*	The data.	*/
     private int Type;							/*	The type of the data. */
