@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.*;
 
 import com.sun.org.apache.bcel.internal.generic.Type;
 
@@ -12,7 +13,7 @@ import Interpreter.Value;
 
 public class IndexManager{
 	private static CatalogManager cm = CatalogManager.getInstance();
-		 
+	private static TreeMap<String, Integer> mapIndexRoot = new TreeMap<String, Integer>();	 
 	public static Buffer buf;
 		
 	IndexManager(Buffer buffer){
@@ -105,7 +106,7 @@ public class IndexManager{
 			BPlusTree thisTree = new BPlusTree(index, buf, index.rootNum);		/*This place has bugs.*/
 			thisTree.insert(key, blockOffset, offset);
 			//index.rootNum=thisTree.myRootBlock.blockOffset;
-			setIndexRoot(index, thisTree.myRootBlock.getPageNum());
+			setIndexRoot(index.indexName, thisTree.myRootBlock.getPageNum());
 		} catch (NullPointerException e) {
 			System.err.println();
 		}	
@@ -117,10 +118,25 @@ public class IndexManager{
 			BPlusTree thisTree = new BPlusTree(index, buf, index.rootNum);		/*This place has bugs.*/
 			thisTree.delete(deleteKey);
 			//index.rootNum=thisTree.myRootBlock.blockOffset;
-			setIndexRoot(index, thisTree.myRootBlock.getPageNum());
+			setIndexRoot(index.indexName, thisTree.myRootBlock.getPageNum());
 		} catch (NullPointerException e) {
 			System.err.println();
 		}	
 	}
 	
+	 static  public void setIndexRoot(String indexName,int number){;
+	 	if (mapIndexRoot.containsKey(indexName)) {
+	 		mapIndexRoot.replace(indexName, number);
+	 	} else 
+	 		mapIndexRoot.put(indexName, number);
+	}
+	
+	 //获得索引根块在文件中的block偏移量， 如果该index不存在则返回-1
+	 static  public int getIndexRoot(String indexName){
+		if (mapIndexRoot.containsKey(indexName))
+			return mapIndexRoot.get(indexName);
+		else
+			return -1;
+		
+	}
 }

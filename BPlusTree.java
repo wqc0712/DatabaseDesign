@@ -36,7 +36,7 @@ public class BPlusTree{
 		MIN_CHILDREN_FOR_INTERNAL=(int)Math.ceil(1.0 *(MAX_CHILDREN_FOR_INTERNAL)/ 2);
 		pffh = PF_Manager.getInstance().openFile(filename);
 		
-		setIndexRoot(indexInfo, 0);
+		IndexManager.setIndexRoot(indexInfo.indexName, 0);
 		myIndex = indexInfo;
 		int blockNum = pffh.addPage();
 		new LeafNode(myRootBlock = pffh.getBlock(blockNum)); //创建该索引文件的第一块，并用LeafNode类包装它		
@@ -87,7 +87,7 @@ public class BPlusTree{
 		if(newBlock!=null)
 			myRootBlock=newBlock;
 		
-		setIndexRoot(myIndex, myRootBlock.getPageNum());
+		IndexManager.setIndexRoot(myIndex.indexName, myRootBlock.getPageNum());
 	}
 	
 	public RID searchKey(byte[] originalkey){
@@ -137,7 +137,7 @@ public class BPlusTree{
 		if(newBlock != null)
 			myRootBlock = newBlock;
 		
-		setIndexRoot(myIndex, myRootBlock.getPageNum());
+		IndexManager.setIndexRoot(myIndex.indexName, myRootBlock.getPageNum());
 	}
 	
 	abstract class Node {
@@ -222,7 +222,7 @@ public class BPlusTree{
 				int blockNum = pffh.addPage();
 				BufferBlock newBlock = pffh.getBlock(blockNum);
 //				CatalogManager.addIndexBlockNum(myIndex);
-//				myIndex.blockNum++;
+				myIndex.blockNum++;
 //				BufferBlock newBlock = BufferManager.createBlock(filename, newBlockOffset);
 				InternalNode newNode = new InternalNode(newBlock);
 				
@@ -287,10 +287,10 @@ public class BPlusTree{
 				InternalNode ParentNode;
 				if (block.getData()[5] == '$'){  //没有父节点，则创建父节点
 					//创建新块并包装
-					parentBlockNum = myIndex.blockNum;
-					ParentBlock = pffh.createPage(parentBlockNum);
+					parentBlockNum = pffh.addPage();
+					ParentBlock = pffh.getBlock(parentBlockNum);
 //					ParentBlock = BufferManager.createBlock(filename, parentBlockNum);
-					addIndexBlockNum(myIndex.indexName);
+//					addIndexBlockNum(myIndex.indexName);
 					myIndex.blockNum++;
 					
 					//设置父块信息
@@ -574,9 +574,9 @@ public class BPlusTree{
 			int keyNum = block.getInt(1, 4);
 			if (++keyNum > MAX_FOR_LEAF){  //分裂节点
 				boolean half = false;
-				BufferBlock newBlock = pffh.createBlock(myIndex.blockNum);
+				BufferBlock newBlock = pffh.getBlock(pffh.addPage());
 //				BufferBlock newBlock = BufferManager.createBlock(filename, myIndex.blockNum);
-				addIndexBlockNum(myIndex);
+//				addIndexBlockNum(myIndex);
 				myIndex.blockNum++;
 				LeafNode newNode = new LeafNode(newBlock);
 				
@@ -642,12 +642,12 @@ public class BPlusTree{
 			    BufferBlock ParentBlock;
 			    InternalNode ParentNode;
 				if(block.getData()[5]=='$'){  //没有父节点，则创建父节点
-					parentBlockNum=myIndex.blockNum;
-					ParentBlock = pffh.createPage(parentBlockNum);
+					parentBlockNum = pffh.addPage();
+					ParentBlock = pffh.getBlock(parentBlockNum);
 //				or	ParentBlock = pffh.getBlock(pffh.addPage());
 //					ParentBlock=BufferManager.createBlock(filename, parentBlockNum);
 				
-					addIndexBlockNum(myIndex.indexName);
+//					addIndexBlockNum(myIndex.indexName);
 					myIndex.blockNum++;
 		
 					block.setInt(5, POINTERLENGTH, parentBlockNum);
