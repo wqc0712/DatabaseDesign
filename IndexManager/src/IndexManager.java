@@ -13,11 +13,11 @@ import Interpreter.Value;*/
 public class IndexManager{
 	private static CatalogManager cm = CatalogManager.getInstance();
 	private static TreeMap<String, Integer> mapIndexRoot = new TreeMap<String, Integer>();	 
-	public static Buffer buf;
+/*	public static Buffer buf;
 	
 	IndexManager(Buffer buffer){
 		buf = buffer;
-	}
+	} */
 	private static IndexManager Instant = new IndexManager();
     public static IndexManager getInstance() { return Instant;}
 	private static byte[] getColumnValue(String tableName, Index index, byte[] row) {
@@ -54,7 +54,7 @@ public class IndexManager{
 			
 			while (rmr != null) {
 				byte[] Record = rmr.getData();
-				byte[] key = getColumnValue(tableName, index.indexName, Record);
+				byte[] key = getColumnValue(tableName, index, Record);
 				thisTree.insert(key, rmr.getRid().getPageNum(), rmr.getRid().getSlotNum());
 				rmr = rmfs.getNextRec();
 			}
@@ -91,7 +91,7 @@ public class IndexManager{
 		RID off = new RID();
 		try{
 			//Index inx=CatalogManager.getIndex(index.indexName);
-			BPlusTree thisTree = new BPlusTree(index, buf, index.rootNum);		/*This place has bugs.*/
+			BPlusTree thisTree = new BPlusTree(index, index.rootNum);		/*This place has bugs.*/
 			off = thisTree.searchKey(key);
 			return off;
 		} catch(NullPointerException e) {
@@ -103,7 +103,7 @@ public class IndexManager{
 	static public void insertKey(Index index, byte[] key, int blockOffset, int offset) throws Exception {
 		try {
 			//Index inx=CatalogManager.getIndex(index.indexName);
-			BPlusTree thisTree = new BPlusTree(index, buf, index.rootNum);		/*This place has bugs.*/
+			BPlusTree thisTree = new BPlusTree(index, index.rootNum);		/*This place has bugs.*/
 			thisTree.insert(key, blockOffset, offset);
 			//index.rootNum=thisTree.myRootBlock.blockOffset;
 			setIndexRoot(index.indexName, thisTree.myRootBlock.getPageNum());
@@ -115,7 +115,7 @@ public class IndexManager{
 	static public void deleteKey(Index index, byte[] deleteKey) throws Exception{
 		try{
 			//Index inx=CatalogManager.getIndex(index.indexName);
-			BPlusTree thisTree = new BPlusTree(index, buf, index.rootNum);		/*This place has bugs.*/
+			BPlusTree thisTree = new BPlusTree(index, index.rootNum);		/*This place has bugs.*/
 			thisTree.delete(deleteKey);
 			//index.rootNum=thisTree.myRootBlock.blockOffset;
 			setIndexRoot(index.indexName, thisTree.myRootBlock.getPageNum());
