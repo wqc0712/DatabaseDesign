@@ -1,4 +1,4 @@
-package CatalogManager.src;
+/*package CatalogManager.src;*/
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,9 +6,9 @@ import java.util.Arrays;
 /**
  * Created by tom on 15/10/30.
  */
-import pagedfile.*;
+/*import pagedfile.*;
 import buffermanager.*;
-import Interpreter.*;
+import Interpreter.*;*/
 
 //import CatalogManager.*;
 
