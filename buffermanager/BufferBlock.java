@@ -81,6 +81,11 @@ public class BufferBlock {
 		setBytes(pos + 8,insertKey);
 		dirty = true;
 	} 
+	public  void setInternalKey(int pos, byte[] key, int offset) {
+		setBytes(pos, key);
+		setInt(pos + key.length, 4, offset);
+		dirty = true;
+	}
 	public int getHead() {
 		return pageHead;
 	}
