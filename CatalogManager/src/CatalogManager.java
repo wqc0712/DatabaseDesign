@@ -438,7 +438,7 @@ public class CatalogManager {
     }
 
     public Value GetAttrInformation(String TableName,int Offset) {
-        for (int i = 1;i < T.size();i++) {
+        for (int i = 0;i < T.size();i++) {
             if (T.get(i).getName().equals(TableName)) return T.get(i).getAttr(Offset);
         }
         return null;
