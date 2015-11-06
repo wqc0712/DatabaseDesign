@@ -60,6 +60,7 @@ public class BPlusTree{
 	
 	//以树为单位的插入
 	public void insert(byte[] originalkey, int blockOffset, int offset){
+		try {
 		if (originalkey == null)
 			throw new NullPointerException();  
 
@@ -88,9 +89,13 @@ public class BPlusTree{
 			myRootBlock=newBlock;
 		
 		IndexManager.setIndexRoot(myIndex.indexName, myRootBlock.getPageNum());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	public RID searchKey(byte[] originalkey){
+		try {
 		Node rootNode;
 		if(myRootBlock.getData()[0] == 'I'){ 
 			rootNode = new InternalNode(myRootBlock,true);
@@ -109,9 +114,13 @@ public class BPlusTree{
 		}
 		
 		return rootNode.searchKey(key); //从根节点开始查找
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	public void delete(byte[] originalkey){
+		try {
 		if (originalkey == null)    throw new NullPointerException();  
 
 		Node rootNode;
@@ -138,6 +147,9 @@ public class BPlusTree{
 			myRootBlock = newBlock;
 		
 		IndexManager.setIndexRoot(myIndex.indexName, myRootBlock.getPageNum());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	abstract class Node {
@@ -165,6 +177,7 @@ public class BPlusTree{
 	
 	//中间节点类
 	class InternalNode extends Node{	
+		try {
 		InternalNode(BufferBlock blk){		
 			block = blk; //将中间块包装
 	    	
@@ -547,12 +560,14 @@ public class BPlusTree{
 				}
 			}		
 			return null;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 	
 	//叶子节点类
 	class LeafNode extends Node{
-				
+		try {
 		LeafNode(BufferBlock blk){
 			block = blk;
 			
@@ -923,6 +938,8 @@ public class BPlusTree{
 			}
 			
 			return null;
+		} catch(Exception e) {
+					System.out.println(e.getMessage());
 		}
 	}
 	
