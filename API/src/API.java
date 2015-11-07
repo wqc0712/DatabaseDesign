@@ -214,16 +214,43 @@ public class API {
 				break;
 			}
 			if (judge) {
+				judge = true;
+				for (int i = 0; i < attr.size(); i++) {
+					Value temp = cm.GetAttrInformation(table_name,i);
+					if (temp.IsUnique() == true) {
+						RM_FileHandler rmf = rm.openFile(table_Name);
+						Constant.TYPE type = null;
+						int length = 0;
+						switch (temp.getType()) {
+						case 0: type = Constant.TYPE.INT; length = 4;break;
+						case 1: type = Constant.TYPE.STRING; length = temp.getLength();break;	/*This may have some problem about attrbute's length. */
+						case 2: type = Constant.TYPE.DOUBLE; length = 8;break;
+						}
+						
+						int offset = i * 256;
+						Constant.COMP_OP op = Constant.COMP_OP.EQ_OP;
+						ArrayList<Value> temp1 = new ArrayList<>();
+						temp1.add(temp);
+						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp1));
+						RM_Record rmr = rmfs.getNextRec();
+
+						if (rmr != null) {
+							judge = fasle;
+						}
+					}
+				}
+				if (judge) {
 				try {
 					RM_FileHandler rmf = rm.openFile(table_Name);
 					rmf.insertRec(String2Byte(attr));
 					rm.closeFile(rmf);
 					System.out.println("Successfully insert into table "+table_Name+".");
 				} catch (Exception e) {
+					System.out.println(e.getMessage());
 					throw e;
-				} finally {
-					/*useless*/
 				}
+				} else
+					System.out.println("Unique error!");
 			} else
 				System.out.println("Error: attributes are not cooresponding to the table.");
 //				throw new Exception("Error: attributes are not corresponding to the table.");
