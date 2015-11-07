@@ -168,6 +168,13 @@ public class Context {
                         Error = true;
                         err.printStackTrace();
                     }
+                } else {
+                    try {
+                        API.getInstance().drop_index(IndexID);
+                    } catch (Exception err) {
+                        Error = true;
+                        err.printStackTrace();
+                    }
                 }
                 break;
             }
@@ -181,8 +188,10 @@ public class Context {
                     }
                 } else {
                     try {
+                        API.getInstance().create_index(IndexID,TableID,ListID);
                     } catch (Exception err) {
-
+                        Error = true;
+                        err.printStackTrace();
                     }
                 }
                 break;

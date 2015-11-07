@@ -125,6 +125,7 @@ public class BPlusTree{
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+		return null;
 	}
 
 	public void delete(byte[] originalkey){
@@ -185,6 +186,7 @@ public class BPlusTree{
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+		return -1;
 	}
 	
 	//中间节点类
@@ -231,6 +233,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			return null;
 		}
 		
 		//插入过程中有时需要对中间节点进行分支，branchKey为要新插入的路标，leftChild为新路标的左子节点（也就是已经存在的节点），rightChild为新路标的右子节点
@@ -371,6 +374,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			return null;
 		}
 		
 		//以中间节点为单位的查找
@@ -395,6 +399,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			return null;
 		}
 
 		//以中间节点为单位的删除
@@ -419,6 +424,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			return null;
 		}
 	
 		//删除过程中产生的节点合并，this块和after块以及它们之间的unionKey
@@ -454,6 +460,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			return null;
 		}
 		
 		//删除过程中产生的兄弟块内容重排，this块和after块以及它们之间的internalKey,返回的changeKey是为了更新父块中它们两指针中间的键值
@@ -479,6 +486,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			return null;
 		}
 
 		byte[] rearrangeBefore(BufferBlock siblingBlock, byte[] internalKey){ //兄弟节点在其前
@@ -504,6 +512,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			return null;
 		}
 
 		//修改posBlockNum标号后面的路标
@@ -549,25 +558,43 @@ public class BPlusTree{
 							if (keyNum == 0){	//没有路标，只有一个子块标号时，把它的子块作为根块，把this块删除
 								//block.isvalid=false;
 								myIndex.blockNum--;
-								return pffh.getBlock(block.getInt(9, POINTERLENGTH));
+								try {
+									return pffh.getBlock(block.getInt(9, POINTERLENGTH));
+								} catch (Exception err) {
+									System.out.println("ERROR!");
+								}
 							}
 							return null;
 						}
 				
 						//找到父亲块
 						int parentBlockNum = block.getInt(5, POINTERLENGTH);
-						BufferBlock parentBlock = pffh.getBlock(parentBlockNum);
-						int parentKeyNum = parentBlock.getInt(1, 4);
+						BufferBlock parentBlock = null;
+						try {
+							parentBlock = pffh.getBlock(parentBlockNum);
+						} catch (Exception err) {
+							System.out.println("ERROR!");
+						}
+						int parentKeyNum = 0;
+						try {
+							parentKeyNum = parentBlock.getInt(1, 4);
+						} catch (Exception err) {
+							System.out.println("ERROR");
+						}
 						
 						int sibling;
-						BufferBlock siblingBlock;
+						BufferBlock siblingBlock = null;
 						int j;
 						for(j = 0; j < parentKeyNum; j++){
 							int ppos = 9 + j * (myIndex.columnLength + POINTERLENGTH);
 							if (block.getPageNum() == parentBlock.getInt(ppos, POINTERLENGTH)){ 
 								//读到后续兄弟块
 								sibling = parentBlock.getInt(ppos + POINTERLENGTH + myIndex.columnLength, POINTERLENGTH);
-								siblingBlock = pffh.getBlock(sibling);
+								try {
+									siblingBlock = pffh.getBlock(sibling);
+								} catch (Exception err) {
+									System.out.println("ERROR!");
+								}
 									
 								byte[] unionKey = parentBlock.getBytes(ppos + POINTERLENGTH, myIndex.columnLength);
 								
@@ -607,9 +634,10 @@ public class BPlusTree{
 					}
 				}		
 				return null;
+			}catch (Exception e) {
+				System.out.println(e.getMessage());
 			}
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			return null;
 		}
 	}
 	
@@ -785,6 +813,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			return null;
 		}
 		
 		//以叶子节点为单位的查找索引
@@ -839,6 +868,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			return null;
 		}
 
 		//以叶子节点为单位的块合并
@@ -866,6 +896,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			return null;
 		}
 		
 		//从兄弟节点挪来一条索引进行重排
@@ -898,7 +929,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
-
+			return null;
 		}
 		
 		byte[] rearrangeBefore(BufferBlock siblingBlock){  //兄弟节点在其前
@@ -930,6 +961,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			return null;
 		}
 		
 		//以叶子节点为单位的索引删除
@@ -1012,6 +1044,7 @@ public class BPlusTree{
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
+			return null;
 		}
 	}
 	

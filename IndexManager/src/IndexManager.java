@@ -46,7 +46,7 @@ public class IndexManager{
 		Value attr_;
 		BPlusTree thisTree = new BPlusTree(index);
 		
-		String filename = tableName + ".table";       	
+		String filename = tableName;
 		try{
 			RM_FileHandler rmf = RM_Manager.getInstance().openFile(filename);
 			RM_FileScan rmfs = new RM_FileScan(rmf, Constant.TYPE.INT, 4, 0, Constant.COMP_OP.NO_OP, PF_Manager.intTobyteArray(1));
@@ -61,6 +61,7 @@ public class IndexManager{
 	    } catch (NullPointerException e){
 	   		System.err.println("must not be null for key.");
 	    } catch (Exception e){
+			//e.printStackTrace();
 	   		System.err.println("the index has not been created.");
 	    }
 	   
