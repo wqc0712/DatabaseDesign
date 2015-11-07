@@ -1,6 +1,8 @@
 import java.io.File;
 import java.util.*;
 
+import API.src.RM_Manager;
+
 
 /*import constant.*;
 import buffermanager.*;
@@ -12,7 +14,9 @@ import Interpreter.Value;*/
 
 public class IndexManager{
 	private static CatalogManager cm = CatalogManager.getInstance();
-	private static TreeMap<String, Integer> mapIndexRoot = new TreeMap<String, Integer>();	 
+	private static RM_Manager rm = RM_Manager.getInstance();
+	private static TreeMap<String, Integer> mapIndexRoot = new TreeMap<String, Integer>();
+	private static TreeMap<String, Index> mapName2Index = new TreeMap<String, Index>();
 /*	public static Buffer buf;
 	
 	IndexManager(Buffer buffer){
@@ -48,6 +52,7 @@ public class IndexManager{
 		
 		String filename = tableName;
 		try{
+			mapName2Index.put(tableName, index);
 			RM_FileHandler rmf = RM_Manager.getInstance().openFile(filename);
 			RM_FileScan rmfs = new RM_FileScan(rmf, Constant.TYPE.INT, 4, 0, Constant.COMP_OP.NO_OP, PF_Manager.intTobyteArray(1));
 			RM_Record rmr = rmfs.getNextRec();
@@ -67,7 +72,7 @@ public class IndexManager{
 	    }
 	   
 	   //index.rootNum=thisTree.myRootBlock.blockOffset;
-  	    setIndexRoot(index.indexName, thisTree.myRootBlock.getPageNum()); 									/*Need to define a function called setIndexRoot.*/
+  	    setIndexRoot(index.indexName, thisTree.myRootBlock.getPageNum());
 		System.out.println("Create index successfully!");
 	}
 	
@@ -87,6 +92,13 @@ public class IndexManager{
         }
 		//buf.setInvalid(filename);  //将buf中所有与此索引相关的缓冲块都置为无效
 		System.out.println("Delete index successfully！");
+	}
+	
+	public static void dropTable(String filename) {
+		for (String s : mapName2Index.keySet()) {
+			dropIndex(mapName2Index.get(s).indexName);
+			mapName2Index.remove(s, mapName2Index.get(s).indexName);
+		}
 	}
 	
 	public static RID searchEqual(Index index, byte[] key) throws Exception{

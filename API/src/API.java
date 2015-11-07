@@ -73,7 +73,8 @@ public class API {
 		if (cm.isTableExist(table_Name)) {
 			try {
 				rm.destoryFile(table_Name);
-				CatalogManager.getInstance().dropTable(table_Name);
+				cm.dropTable(table_Name);
+				im.dropTable(table_Name);
 				System.out.println("Drop table "+table_Name+" successfully.");
 			} catch  (Exception e) {
 				System.out.println(e);
@@ -97,7 +98,6 @@ public class API {
 		if (cm.isIndexExist(index_Name)) {
 			cm.dropIndex(index_Name);
 			im.dropIndex(index_Name);
-//			BufferManager.dropTable(index_Name+".index");
 		} else 
 			System.out.println("Error: do not have this index");
 	}
