@@ -1,7 +1,6 @@
 import java.io.File;
 import java.util.*;
 
-import API.src.RM_Manager;
 
 
 /*import constant.*;
@@ -34,7 +33,7 @@ public class IndexManager{
 			en += attr_.getLength();
 		}*/
 		int st = 0, en = 0;
-		for (int i = 0; i <= index.column; i++) {
+		for (int i = 0; i < index.column; i++) {
 			st = en;
 			en += cm.GetAttrInformation(tableName, i).getLength();
 		}
@@ -97,7 +96,7 @@ public class IndexManager{
 	public static void dropTable(String filename) {
 		for (String s : mapName2Index.keySet()) {
 			dropIndex(mapName2Index.get(s).indexName);
-			mapName2Index.remove(s, mapName2Index.get(s).indexName);
+			mapName2Index.remove(s, mapName2Index.get(s));
 		}
 	}
 	
