@@ -230,7 +230,7 @@ public class API {
 						int offset = i * 256;
 						Constant.COMP_OP op = Constant.COMP_OP.EQ_OP;
 						ArrayList<Value> temp1 = new ArrayList<>();
-						temp1.add(temp);
+						temp1.add(attr.get(i));
 						RM_FileScan rmfs = new RM_FileScan(rmf, type, length, offset, op, String2Byte(temp1));
 						RM_Record rmr = rmfs.getNextRec();
 
