@@ -216,7 +216,7 @@ public class API {
 			if (judge) {
 				judge = true;
 				for (int i = 0; i < attr.size(); i++) {
-					Value temp = cm.GetAttrInformation(table_name,i);
+					Value temp = cm.GetAttrInformation(table_Name,i);
 					if (temp.IsUnique() == true) {
 						RM_FileHandler rmf = rm.openFile(table_Name);
 						Constant.TYPE type = null;
@@ -235,7 +235,7 @@ public class API {
 						RM_Record rmr = rmfs.getNextRec();
 
 						if (rmr != null) {
-							judge = fasle;
+							judge = false;
 						}
 					}
 				}
