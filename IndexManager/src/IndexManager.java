@@ -15,7 +15,7 @@ public class IndexManager{
 	private static CatalogManager cm = CatalogManager.getInstance();
 	private static RM_Manager rm = RM_Manager.getInstance();
 	private static TreeMap<String, Integer> mapIndexRoot = new TreeMap<String, Integer>();
-	private static TreeMap<String, Index> mapName2Index = new TreeMap<String, Index>();
+	private static TreeMap<String, TreeSet<Index>> mapName2Index = new TreeMap<String, TreeSet<Index>>();
 /*	public static Buffer buf;
 	
 	IndexManager(Buffer buffer){
@@ -44,6 +44,19 @@ public class IndexManager{
 		return colValue;
 	}
 	
+	static boolean mapInsert(String key, Index value) {
+		if (mapName2Index.containsKey(key)) {
+			Set<Index> set = mapName2Index.get(key);
+			if (set.contains(value)) return false;
+			set.add(value);
+		} else {
+			TreeSet<Index> set = new TreeSet<Index>();
+			set.add(value);
+			mapName2Index.put(key, set);
+		}
+		return true;
+	}
+	
 	public static void createIndex(String tableName, Index index){
 		Value table_ = cm.GetTableInformation(tableName);
 		Value attr_;
@@ -51,7 +64,7 @@ public class IndexManager{
 		
 		String filename = tableName;
 		try{
-			mapName2Index.put(tableName, index);
+			MapInsert(tableName, index);
 			RM_FileHandler rmf = RM_Manager.getInstance().openFile(filename);
 			RM_FileScan rmfs = new RM_FileScan(rmf, Constant.TYPE.INT, 4, 0, Constant.COMP_OP.NO_OP, PF_Manager.intTobyteArray(1));
 			RM_Record rmr = rmfs.getNextRec();
@@ -94,10 +107,11 @@ public class IndexManager{
 	}
 	
 	public static void dropTable(String filename) {
-		for (String s : mapName2Index.keySet()) {
-			dropIndex(mapName2Index.get(s).indexName);
-			mapName2Index.remove(s, mapName2Index.get(s));
+		TreeSet<Index> i = mapName2Index.get(filename);
+		for (Index j : i) {
+			dropIndex(j.indexName);
 		}
+		mapName2Index.remove(filename, i);
 	}
 	
 	public static RID searchEqual(Index index, byte[] key) throws Exception{
