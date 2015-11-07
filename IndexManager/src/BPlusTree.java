@@ -22,7 +22,8 @@ public class BPlusTree{
 			 filename = indexInfo.indexName + ".index";
 			 PF_Manager.getInstance().creatFile(filename);
 		}catch(Exception e){
-			 System.err.println("create index failed !");
+			e.printStackTrace();
+			System.err.println("create index failed !");
 	    }
 		
 		//根据索引键大小计算分叉数

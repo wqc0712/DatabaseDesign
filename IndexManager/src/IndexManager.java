@@ -59,6 +59,7 @@ public class IndexManager{
 				rmr = rmfs.getNextRec();
 			}
 	    } catch (NullPointerException e){
+			e.printStackTrace();
 	   		System.err.println("must not be null for key.");
 	    } catch (Exception e){
 			//e.printStackTrace();

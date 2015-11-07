@@ -24,7 +24,7 @@ public class API {
 
 				Value attr_ = cm.GetAttrInformation(table_Name, cm.findOffset(table_Name, primary_Key));
 				Index new_Index = new Index();
-				new_Index.indexName = "_" + primary_Key;
+				new_Index.indexName = "_" + table_Name;
 				new_Index.tableName = table_Name;
 				new_Index.column = cm.GetTableInformation(table_Name).getLength();
 				new_Index.columnLength = attr_.getLength();
