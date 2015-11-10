@@ -68,7 +68,7 @@ public class PF_Manager {
 	    return b;
 	}  
 	public  void creatFile(String filename) throws Exception {
-		print(fileLocation(filename));
+		//print(fileLocation(filename));
 		File file = new File(fileLocation(filename));
 		if (file.exists()) {
 			throw new FileExistExpection();

@@ -33,7 +33,7 @@ public class RM_FileHandler {
 	}
 	public RID insertRec(byte[] data) throws Exception {
 		// TODO Notice new byte is zero ?
-		System.out.println("FreePage"+header.firstFreePage);
+		//System.out.println("FreePage"+header.firstFreePage);
 		assert(data.length == header.recordSize);
 		if (header.firstFreePage == Constant.NO_FREE_PAGE) {
 			int pageNum = pfh.addPage();

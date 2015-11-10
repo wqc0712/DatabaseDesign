@@ -15,7 +15,7 @@ public class IndexManager{
 	private static CatalogManager cm = CatalogManager.getInstance();
 	private static RM_Manager rm = RM_Manager.getInstance();
 	private static TreeMap<String, Integer> mapIndexRoot = new TreeMap<String, Integer>();
-	private static TreeMap<String, TreeSet<Index>> mapName2Index = new TreeMap<String, TreeSet<Index>>();
+	private static TreeMap<String, HashSet<Index>> mapName2Index = new TreeMap<String, HashSet<Index>>();
 /*	public static Buffer buf;
 	
 	IndexManager(Buffer buffer){
@@ -46,11 +46,11 @@ public class IndexManager{
 	
 	static boolean mapInsert(String key, Index value) {
 		if (mapName2Index.containsKey(key)) {
-			Set<Index> set = mapName2Index.get(key);
+			HashSet<Index> set = mapName2Index.get(key);
 			if (set.contains(value)) return false;
 			set.add(value);
 		} else {
-			TreeSet<Index> set = new TreeSet<Index>();
+			HashSet<Index> set = new HashSet<Index>();
 			set.add(value);
 			mapName2Index.put(key, set);
 		}
@@ -64,7 +64,7 @@ public class IndexManager{
 		
 		String filename = tableName;
 		try{
-			MapInsert(tableName, index);
+			mapInsert(tableName, index);
 			RM_FileHandler rmf = RM_Manager.getInstance().openFile(filename);
 			RM_FileScan rmfs = new RM_FileScan(rmf, Constant.TYPE.INT, 4, 0, Constant.COMP_OP.NO_OP, PF_Manager.intTobyteArray(1));
 			RM_Record rmr = rmfs.getNextRec();
@@ -79,7 +79,7 @@ public class IndexManager{
 			e.printStackTrace();
 	   		System.err.println("must not be null for key.");
 	    } catch (Exception e){
-			//e.printStackTrace();
+			e.printStackTrace();
 	   		System.err.println("the index has not been created.");
 	    }
 	   
@@ -102,12 +102,13 @@ public class IndexManager{
             System.out.println(e.getMessage());
             System.out.println("Delete index unsuccessfully！");
         }
+
 		//buf.setInvalid(filename);  //将buf中所有与此索引相关的缓冲块都置为无效
 		System.out.println("Delete index successfully！");
 	}
 	
 	public static void dropTable(String filename) {
-		TreeSet<Index> i = mapName2Index.get(filename);
+		HashSet<Index> i = mapName2Index.get(filename);
 		for (Index j : i) {
 			dropIndex(j.indexName);
 		}

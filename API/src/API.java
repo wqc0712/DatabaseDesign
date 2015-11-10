@@ -73,8 +73,9 @@ public class API {
 		if (cm.isTableExist(table_Name)) {
 			try {
 				rm.destoryFile(table_Name);
-				cm.dropTable(table_Name);
 				im.dropTable(table_Name);
+				cm.dropTable(table_Name);
+
 				System.out.println("Drop table "+table_Name+" successfully.");
 			} catch  (Exception e) {
 				System.out.println(e);
@@ -242,6 +243,7 @@ public class API {
 				if (judge) {
 				try {
 					RM_FileHandler rmf = rm.openFile(table_Name);
+
 					rmf.insertRec(String2Byte(attr));
 					rm.closeFile(rmf);
 					System.out.println("Successfully insert into table "+table_Name+".");

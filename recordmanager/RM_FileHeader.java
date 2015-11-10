@@ -4,7 +4,7 @@ public class RM_FileHeader {
 		return (int)((Constant.PAGE_SIZE - 8.0) / (recordSize + 1.0 / 8));
 	}
 	static int CalBitmapSize(int numRecPerPage) {
-		return ((numRecPerPage-1) / 8);
+		return ((numRecPerPage-1) / 8+1);
 	}
 	static RM_FileHeader parseFromData(byte[] fileHeadData) {
 		byte[] recordSizeByte = new byte[4];

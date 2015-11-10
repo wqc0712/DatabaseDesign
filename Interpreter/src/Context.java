@@ -141,6 +141,9 @@ public class Context {
 
     public void push() {
         if (getError() == true) return;
+        System.out.println();
+        System.out.println(">>");
+
         switch (Method) {
             case "select" :{
                 try {

@@ -153,7 +153,7 @@ public class CatalogManager {
     }
 
     public void WriteBack (){
-        System.out.println("finalize");
+        //System.out.println("finalize");
         try {
             PF_Manager.getInstance().destoryFile("Catalog");
             PF_Manager.getInstance().creatFile("Catalog");

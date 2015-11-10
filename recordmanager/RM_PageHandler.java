@@ -26,8 +26,10 @@ public class RM_PageHandler {
 		return (bitmap[bytePos] >>> byteOff) & 1;
 	}
 	static void setBit(byte[] bitmap, int slotNum) {
+
 		int bytePos = slotNum / 8;
 		int byteOff = slotNum % 8;
+		//System.out.println("SLOTNUM"+slotNum+" "+ bytePos+" "+byteOff);
 		bitmap[bytePos] = (byte)(bitmap[bytePos] | (1 << byteOff));
 	}
 	static void setBitFree(byte[] bitmap, int slotNum) {
@@ -55,7 +57,7 @@ public class RM_PageHandler {
 			return false;
 	}
 	public int getFirstFreeBit() {
-//		System.out.println("bitmap"+bitmap[0]);
+		//System.out.println("bitmap"+bitmap[0]);
 		for (int i = 0; i < bitmapSize; i++) {
 			if (bitmap[i] != 0xff) {
 				int off = 0;
