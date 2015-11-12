@@ -12,12 +12,11 @@ public class BPlusTree{
     private int MIN_FOR_LEAF;  //叶子节点的最小索引数
     private int MAX_FOR_LEAF;  //叶子节点的最大索引数
     
-	//public BufferManager buf;
 	public String filename;
 	public BufferBlock myRootBlock;  //根块
 	public Index myIndex;  //索引信息体，由外部传入，可更新
   	
-	BPlusTree(Index indexInfo/*,BufferManager buffer*/){
+	BPlusTree(Index indexInfo){
 		try{	
 			 filename = indexInfo.indexName + ".index";
 			 PF_Manager.getInstance().creatFile(filename);
@@ -26,13 +25,9 @@ public class BPlusTree{
 			System.err.println("create index failed !");
 	    }
 		
-		//根据索引键大小计算分叉数
 		try {
 			int columnLength=indexInfo.columnLength; 
-			//4k大小的块要一个字节分辨是叶子节点还是中间节点，四个字节记录索引键数目，4个字节说明父节点的块号
-			//还有一个POINTERLENGTH长度的指针指向下一个兄弟节点
-			//而每个索引键包括8个字节的指针（前四个字节表示记录在表文件的那一块，后四个字节表示在该块的偏移量）和myIndex.columnLength长度的键值
-			MAX_FOR_LEAF=(int)Math.floor((8192.0-1/*叶子标记*/-4/*键值数*/-POINTERLENGTH/*父亲块号*/-POINTERLENGTH/*下一块叶子块的块号*/)/(8+columnLength));
+			MAX_FOR_LEAF=(int)Math.floor((8192.0-1-4-POINTERLENGTH-POINTERLENGTH)/(8+columnLength));
 			MIN_FOR_LEAF=(int)Math.ceil(1.0 * MAX_FOR_LEAF/ 2);	
 			MAX_CHILDREN_FOR_INTERNAL=MAX_FOR_LEAF; 
 			MIN_CHILDREN_FOR_INTERNAL=(int)Math.ceil(1.0 *(MAX_CHILDREN_FOR_INTERNAL)/ 2);
@@ -41,19 +36,16 @@ public class BPlusTree{
 			IndexManager.setIndexRoot(indexInfo.indexName, 0);
 			myIndex = indexInfo;
 			int blockNum = pffh.addPage();
-			new LeafNode(myRootBlock = pffh.getBlock(blockNum)); //创建该索引文件的第一块，并用LeafNode类包装它		
+			new LeafNode(myRootBlock = pffh.getBlock(blockNum));		
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-//		CatalogManager.addIndexBlockNum(indexName);
-//		myIndex.blockNum++;
 	}
 	
-	//构造构造函数2
 	BPlusTree(Index indexInfo, int rootBlockNum){
 		try {
 			int columnLength = indexInfo.columnLength; 
-			MAX_FOR_LEAF=(int)Math.floor((8192.0-1/*叶子标记*/-4/*键值数*/-POINTERLENGTH/*父亲块号*/-POINTERLENGTH/*下一块叶子块的块号*/)/(8+columnLength));
+			MAX_FOR_LEAF=(int)Math.floor((8192.0-1-4-POINTERLENGTH-POINTERLENGTH)/(8+columnLength));
 			MIN_FOR_LEAF=(int)Math.ceil(1.0 * MAX_FOR_LEAF/ 2);	
 			MAX_CHILDREN_FOR_INTERNAL=MAX_FOR_LEAF; 
 			MIN_CHILDREN_FOR_INTERNAL=(int)Math.ceil(1.0 * (MAX_CHILDREN_FOR_INTERNAL)/ 2);
@@ -61,20 +53,18 @@ public class BPlusTree{
 			myIndex = indexInfo;	
 			filename = myIndex + ".index";
 			pffh = PF_Manager.getInstance().openFile(filename);
-			new LeafNode(myRootBlock = pffh.getBlock(rootBlockNum), true); //注意是读已有块而创建新块
+			new LeafNode(myRootBlock = pffh.getBlock(rootBlockNum), true);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 	}
 	
-	//以树为单位的插入
 	public void insert(byte[] originalkey, int blockOffset, int offset){
 		try {
 			if (originalkey == null)
 				throw new NullPointerException();  
 	
 			Node rootNode;
-			//根据块的信息，以不同的类型包装块
 			if(myRootBlock.getData()[0] == 'I'){ 
 				rootNode = new InternalNode(myRootBlock,true);
 			}
@@ -258,9 +248,7 @@ public class BPlusTree{
 					int newBlockOffset = pffh.getPageNum();
 					int blockNum = pffh.addPage();
 					BufferBlock newBlock = pffh.getBlock(blockNum);
-	//				CatalogManager.addIndexBlockNum(myIndex);
 					myIndex.blockNum++;
-	//				BufferBlock newBlock = BufferManager.createBlock(filename, newBlockOffset);
 					InternalNode newNode = new InternalNode(newBlock);
 					
 					//我们知道新插入路标使超过了上限，也就是现有路标为MAX+1，我们总是为原来的块保留MIN个路标，这样新开的块有MAX+1-MIN个路标
@@ -326,8 +314,6 @@ public class BPlusTree{
 						//创建新块并包装
 						parentBlockNum = pffh.addPage();
 						ParentBlock = pffh.getBlock(parentBlockNum);
-	//					ParentBlock = BufferManager.createBlock(filename, parentBlockNum);
-	//					addIndexBlockNum(myIndex.indexName);
 						myIndex.blockNum++;
 						
 						//设置父块信息
