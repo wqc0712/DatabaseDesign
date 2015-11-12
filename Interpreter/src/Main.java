@@ -35,8 +35,8 @@ public class Main {
                 return;
             }
 
-            if (line.substring(0,4).equals("exec")) {
-                line = line.substring(4);
+            if (line.substring(0,8).equals("execfile")) {
+                line = line.substring(8);
                 line = line.trim();
                 line = line.replace(" ","");
                 line = line.replace(";","");
